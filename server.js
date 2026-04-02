@@ -1,7 +1,14 @@
+import { createServer } from 'node:http'
 import { WebSocketServer } from 'ws'
 
 const port = parseInt(process.env.PORT || '3001', 10)
-const wss = new WebSocketServer({ port })
+
+const httpServer = createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' })
+  res.end('chainchat signaling server')
+})
+
+const wss = new WebSocketServer({ server: httpServer })
 const clients = new Map()
 
 wss.on('connection', (ws) => {
@@ -38,4 +45,6 @@ wss.on('connection', (ws) => {
   })
 })
 
-console.log(`Signaling server running on port ${port}`)
+httpServer.listen(port, () => {
+  console.log(`Signaling server running on port ${port}`)
+})
