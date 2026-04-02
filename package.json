@@ -2,6 +2,22 @@
   "name": "chainchat",
   "type": "module",
   "private": true,
+  "description": "Peer-to-peer blockchain messenger with a Windows 95 desktop interface",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oglenyaboss/chainchat.git"
+  },
+  "keywords": [
+    "blockchain",
+    "p2p",
+    "webrtc",
+    "messenger",
+    "win95",
+    "nuxt",
+    "vue",
+    "typescript"
+  ],
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
@@ -9,7 +25,11 @@
     "dev:all": "node server.js & nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.11.3",
@@ -22,6 +42,9 @@
     "ws": "^8.20.0"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0"
+    "@antfu/eslint-config": "^8.0.0",
+    "@types/node": "^25.5.0",
+    "eslint": "^10.1.0",
+    "vitest": "^4.1.2"
   }
 }
