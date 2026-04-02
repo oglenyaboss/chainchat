@@ -1,3 +1,69 @@
+<script setup lang="ts">
+import type { Transaction } from '~/lib/blockchain'
+import { verifyTransaction } from '~/lib/blockchain'
+import { useBlockchainStore } from '~/stores/blockchain'
+
+const props = defineProps<{
+  tx: Transaction
+  blockIndex?: number | null
+}>()
+
+const blockchainStore = useBlockchainStore()
+const expanded = ref(false)
+const verifyStatus = ref<'loading' | 'valid' | 'invalid'>('loading')
+const copyState = reactive({ txId: false, from: false, to: false })
+
+const resolvedFrom = computed(() => {
+  const name = blockchainStore.getNameForKey(props.tx.from)
+  const short = shortKey(props.tx.from)
+  return name ? `${name} (${short})` : short
+})
+
+const resolvedTo = computed(() => {
+  if (props.tx.to === 'broadcast')
+    return 'BROADCAST'
+  if (props.tx.to === '__system__')
+    return 'SYSTEM'
+  const name = blockchainStore.getNameForKey(props.tx.to)
+  const short = shortKey(props.tx.to)
+  return name ? `${name} (${short})` : short
+})
+
+function shortKey(key: string): string {
+  try {
+    const parsed = JSON.parse(key)
+    const x = (parsed.x || '') as string
+    return `${x.slice(0, 6)}...${x.slice(-4)}`
+  }
+  catch {
+    return key.slice(0, 10)
+  }
+}
+
+function formatTime(ts: number): string {
+  return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+}
+
+async function copy(text: string, field: 'txId' | 'from' | 'to' = 'txId') {
+  await navigator.clipboard.writeText(text)
+  copyState[field] = true
+  setTimeout(() => {
+    copyState[field] = false
+  }, 1500)
+}
+
+// Verify signature on mount
+onMounted(async () => {
+  try {
+    const valid = await verifyTransaction(props.tx)
+    verifyStatus.value = valid ? 'valid' : 'invalid'
+  }
+  catch {
+    verifyStatus.value = 'invalid'
+  }
+})
+</script>
+
 <template>
   <div class="tx-detail" :class="{ 'tx-detail--expanded': expanded }">
     <div class="tx-detail__row" @click="expanded = !expanded">
@@ -16,7 +82,7 @@
       </span>
 
       <span v-if="tx.type === 'message'" class="tx-detail__msg" :title="tx.message">
-        {{ tx.message.length > 30 ? tx.message.slice(0, 30) + '...' : tx.message }}
+        {{ tx.message.length > 30 ? `${tx.message.slice(0, 30)}...` : tx.message }}
       </span>
       <span v-else class="tx-detail__msg tx-detail__msg--name">
         name: {{ tx.message }}
@@ -44,7 +110,9 @@
       <div class="tx-detail__field">
         <span class="tx-detail__label">TX ID:</span>
         <span class="tx-detail__value tx-detail__value--mono">{{ tx.id }}</span>
-        <button class="tx-detail__copy" @click.stop="copy(tx.id)">{{ copyState.txId ? 'Copied' : 'Copy' }}</button>
+        <button class="tx-detail__copy" @click.stop="copy(tx.id)">
+          {{ copyState.txId ? 'Copied' : 'Copy' }}
+        </button>
       </div>
       <div class="tx-detail__field">
         <span class="tx-detail__label">Type:</span>
@@ -53,12 +121,16 @@
       <div class="tx-detail__field">
         <span class="tx-detail__label">From:</span>
         <span class="tx-detail__value tx-detail__value--mono tx-detail__value--wrap">{{ tx.from }}</span>
-        <button class="tx-detail__copy" @click.stop="copy(tx.from, 'from')">{{ copyState.from ? 'Copied' : 'Copy' }}</button>
+        <button class="tx-detail__copy" @click.stop="copy(tx.from, 'from')">
+          {{ copyState.from ? 'Copied' : 'Copy' }}
+        </button>
       </div>
       <div class="tx-detail__field">
         <span class="tx-detail__label">To:</span>
         <span class="tx-detail__value tx-detail__value--mono tx-detail__value--wrap">{{ tx.to }}</span>
-        <button class="tx-detail__copy" @click.stop="copy(tx.to, 'to')">{{ copyState.to ? 'Copied' : 'Copy' }}</button>
+        <button class="tx-detail__copy" @click.stop="copy(tx.to, 'to')">
+          {{ copyState.to ? 'Copied' : 'Copy' }}
+        </button>
       </div>
       <div class="tx-detail__field">
         <span class="tx-detail__label">Message:</span>
@@ -87,68 +159,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { Transaction } from '~/lib/blockchain'
-import { verifyTransaction } from '~/lib/blockchain'
-import { useBlockchainStore } from '~/stores/blockchain'
-
-const props = defineProps<{
-  tx: Transaction
-  blockIndex?: number | null
-}>()
-
-const blockchainStore = useBlockchainStore()
-const expanded = ref(false)
-const verifyStatus = ref<'loading' | 'valid' | 'invalid'>('loading')
-const copyState = reactive({ txId: false, from: false, to: false })
-
-const resolvedFrom = computed(() => {
-  const name = blockchainStore.getNameForKey(props.tx.from)
-  const short = shortKey(props.tx.from)
-  return name ? `${name} (${short})` : short
-})
-
-const resolvedTo = computed(() => {
-  if (props.tx.to === 'broadcast') return 'BROADCAST'
-  if (props.tx.to === '__system__') return 'SYSTEM'
-  const name = blockchainStore.getNameForKey(props.tx.to)
-  const short = shortKey(props.tx.to)
-  return name ? `${name} (${short})` : short
-})
-
-function shortKey(key: string): string {
-  try {
-    const parsed = JSON.parse(key)
-    const x = (parsed.x || '') as string
-    return `${x.slice(0, 6)}...${x.slice(-4)}`
-  }
-  catch {
-    return key.slice(0, 10)
-  }
-}
-
-function formatTime(ts: number): string {
-  return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-}
-
-async function copy(text: string, field: 'txId' | 'from' | 'to' = 'txId') {
-  await navigator.clipboard.writeText(text)
-  copyState[field] = true
-  setTimeout(() => { copyState[field] = false }, 1500)
-}
-
-// Verify signature on mount
-onMounted(async () => {
-  try {
-    const valid = await verifyTransaction(props.tx)
-    verifyStatus.value = valid ? 'valid' : 'invalid'
-  }
-  catch {
-    verifyStatus.value = 'invalid'
-  }
-})
-</script>
 
 <style scoped>
 .tx-detail {

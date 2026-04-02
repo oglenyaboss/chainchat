@@ -1,11 +1,11 @@
 import type { Block, Transaction } from '~/lib/blockchain'
-import { createTransaction, MAX_TRANSACTIONS_PER_BLOCK } from '~/lib/blockchain'
 import type { PeerMessage } from '~/lib/protocol'
-import { createSyncCoordinator } from '~/lib/sync'
-import { createBlockSeenSet, createTransactionSeenSet } from '~/lib/deduplication'
-import { createOrphanPool } from '~/lib/orphan-pool'
-import { hasRegisteredName, isValidNameFormat } from '~/lib/name-registry'
 import type { NodeState } from '~/stores/node-state'
+import { createTransaction, MAX_TRANSACTIONS_PER_BLOCK } from '~/lib/blockchain'
+import { createBlockSeenSet, createTransactionSeenSet } from '~/lib/deduplication'
+import { hasRegisteredName, isValidNameFormat } from '~/lib/name-registry'
+import { createOrphanPool } from '~/lib/orphan-pool'
+import { createSyncCoordinator } from '~/lib/sync'
 
 // Valid state transitions
 const TRANSITIONS: Record<NodeState, readonly NodeState[]> = {
@@ -187,7 +187,10 @@ export function useNodeStateMachine() {
   }
 
   function enterMining() {
-    if (miningLoopActive) return
+    // Guard against re-entrant mining. The state machine already prevents
+    // MINING → MINING transitions, but this flag adds defense-in-depth.
+    if (miningLoopActive)
+      return
     miningLoopActive = true
     runMiningCycle()
   }
@@ -247,7 +250,8 @@ export function useNodeStateMachine() {
 
   function scheduleMining() {
     // Debounce: only one pending schedule at a time
-    if (miningScheduleTimer) return
+    if (miningScheduleTimer)
+      return
     miningScheduleTimer = setTimeout(() => {
       miningScheduleTimer = null
       if (nodeStateStore.state === 'READY' && blockchainStore.pendingTransactions.length > 0) {
@@ -308,7 +312,7 @@ export function useNodeStateMachine() {
 
   function handleHello(
     _peerId: string,
-    msg: { peerId: string; publicKey: string; nickname: string },
+    msg: { peerId: string, publicKey: string, nickname: string },
   ) {
     peerStore.addPeer({ peerId: msg.peerId, publicKey: msg.publicKey, nickname: msg.nickname })
 
@@ -333,7 +337,8 @@ export function useNodeStateMachine() {
   }
 
   function handleNewTransaction(_peerId: string, tx: Transaction) {
-    if (txSeenSet.hasSeen(tx.id)) return
+    if (txSeenSet.hasSeen(tx.id))
+      return
     txSeenSet.markSeen(tx.id)
 
     blockchainStore.addPendingTransaction(tx)
@@ -346,7 +351,8 @@ export function useNodeStateMachine() {
   }
 
   async function handleNewBlock(_peerId: string, block: Block) {
-    if (blockSeenSet.hasSeen(block.hash)) return
+    if (blockSeenSet.hasSeen(block.hash))
+      return
     blockSeenSet.markSeen(block.hash)
 
     // Try to add the block directly
@@ -443,17 +449,20 @@ export function useNodeStateMachine() {
   function resolveNickname(publicKey: string): string {
     // Prefer on-chain name
     const onChainName = blockchainStore.getNameForKey(publicKey)
-    if (onChainName) return onChainName
+    if (onChainName)
+      return onChainName
     // Fallback: local identity
-    if (publicKey === identityStore.publicKey) return identityStore.nickname
+    if (publicKey === identityStore.publicKey)
+      return identityStore.nickname
     // Fallback: peer nickname
     const peer = peerStore.peerList.find(p => p.publicKey === publicKey)
-    return peer?.nickname ?? publicKey.slice(0, 12) + '...'
+    return peer?.nickname ?? `${publicKey.slice(0, 12)}...`
   }
 
   async function processIncomingTransaction(tx: Transaction) {
     // Skip system transactions (name registrations)
-    if (tx.to === '__system__') return
+    if (tx.to === '__system__')
+      return
 
     let content = tx.message
     if (tx.to === identityStore.publicKey) {
@@ -481,8 +490,10 @@ export function useNodeStateMachine() {
   let nameRegistrationPending = false
 
   async function registerName(name: string): Promise<void> {
-    if (nameRegistrationPending) return
-    if (hasRegisteredName(blockchainStore.chain, identityStore.publicKey)) return
+    if (nameRegistrationPending)
+      return
+    if (hasRegisteredName(blockchainStore.chain, identityStore.publicKey))
+      return
 
     nameRegistrationPending = true
 
@@ -504,9 +515,12 @@ export function useNodeStateMachine() {
   }
 
   function tryAutoRegisterName() {
-    if (!identityStore.nickname) return
-    if (hasRegisteredName(blockchainStore.chain, identityStore.publicKey)) return
-    if (!isValidNameFormat(identityStore.nickname)) return
+    if (!identityStore.nickname)
+      return
+    if (hasRegisteredName(blockchainStore.chain, identityStore.publicKey))
+      return
+    if (!isValidNameFormat(identityStore.nickname))
+      return
     registerName(identityStore.nickname)
   }
 

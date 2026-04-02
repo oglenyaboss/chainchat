@@ -16,7 +16,7 @@ interface MineRequest {
 
 let mining = false
 
-self.onmessage = async (e: MessageEvent) => {
+globalThis.onmessage = async (e: MessageEvent) => {
   const data = e.data as MineRequest | { type: 'stop' }
 
   if ('type' in data && data.type === 'stop') {
@@ -35,7 +35,7 @@ self.onmessage = async (e: MessageEvent) => {
     const hash = await sha256(blockData)
 
     if (hash.startsWith(target)) {
-      self.postMessage({
+      globalThis.postMessage({
         type: 'result',
         block: {
           index: req.index,
@@ -55,7 +55,7 @@ self.onmessage = async (e: MessageEvent) => {
     if (nonce % 1000 === 0) {
       const elapsed = (performance.now() - startTime) / 1000
       const hashrate = Math.round(nonce / elapsed)
-      self.postMessage({ type: 'progress', hashrate, nonce })
+      globalThis.postMessage({ type: 'progress', hashrate, nonce })
     }
   }
 }

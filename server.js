@@ -1,7 +1,8 @@
 import { createServer } from 'node:http'
 import { WebSocketServer } from 'ws'
 
-const port = parseInt(process.env.PORT || '3001', 10)
+// eslint-disable-next-line node/prefer-global/process
+const port = Number.parseInt(process.env.PORT || '3001', 10)
 
 const httpServer = createServer((_req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' })
@@ -15,7 +16,13 @@ wss.on('connection', (ws) => {
   let clientId = null
 
   ws.on('message', (raw) => {
-    const msg = JSON.parse(raw.toString())
+    let msg
+    try {
+      msg = JSON.parse(raw.toString())
+    }
+    catch {
+      return
+    }
 
     if (msg.type === 'register') {
       clientId = msg.peerId
@@ -46,5 +53,6 @@ wss.on('connection', (ws) => {
 })
 
 httpServer.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log(`Signaling server running on port ${port}`)
 })

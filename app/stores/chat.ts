@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import type { Block } from '~/lib/blockchain'
+import { defineStore } from 'pinia'
 
 export interface ChatMessage {
   readonly id: string
@@ -18,7 +18,8 @@ export const useChatStore = defineStore('chat', () => {
   const channelMessages = computed(() =>
     messages.value.filter((msg) => {
       // Never show system messages in chat
-      if (msg.to === '__system__') return false
+      if (msg.to === '__system__')
+        return false
 
       if (activeChannel.value === 'broadcast') {
         return msg.to === 'broadcast'
@@ -64,7 +65,7 @@ export const useChatStore = defineStore('chat', () => {
   function loadFromChain(
     chain: readonly Block[],
     resolveNickname: (publicKey: string) => string,
-    resolveContent?: (tx: { from: string; to: string; message: string }) => Promise<string>,
+    resolveContent?: (tx: { from: string, to: string, message: string }) => Promise<string>,
   ) {
     const existingIds = new Set(messages.value.map(m => m.id))
 
@@ -76,9 +77,11 @@ export const useChatStore = defineStore('chat', () => {
           continue
         }
         // Skip system transactions
-        if (tx.to === '__system__') continue
+        if (tx.to === '__system__')
+          continue
         // Skip non-message transactions
-        if (tx.type && tx.type !== 'message') continue
+        if (tx.type && tx.type !== 'message')
+          continue
 
         // For broadcast: plaintext. For private: caller decrypts.
         const contentPromise = (tx.to !== 'broadcast' && resolveContent)
@@ -92,6 +95,16 @@ export const useChatStore = defineStore('chat', () => {
             fromNickname: resolveNickname(tx.from),
             to: tx.to,
             content,
+            timestamp: tx.timestamp,
+            blockIndex: block.index,
+          })
+        }).catch(() => {
+          addMessage({
+            id: tx.id,
+            from: tx.from,
+            fromNickname: resolveNickname(tx.from),
+            to: tx.to,
+            content: '[unable to decrypt]',
             timestamp: tx.timestamp,
             blockIndex: block.index,
           })

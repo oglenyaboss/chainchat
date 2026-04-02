@@ -1,10 +1,55 @@
+<script setup lang="ts">
+import type { Block } from '~/lib/blockchain'
+import { isValidProof } from '~/lib/blockchain'
+import { useBlockchainStore } from '~/stores/blockchain'
+
+const props = defineProps<{ block: Block }>()
+
+const blockchainStore = useBlockchainStore()
+const expanded = ref(false)
+const hashCopied = ref(false)
+const prevHashCopied = ref(false)
+
+const difficulty = computed(() => blockchainStore.difficulty)
+
+const powValid = computed(() => {
+  if (props.block.index === 0)
+    return true
+  return isValidProof(props.block.hash, difficulty.value)
+})
+
+function formatTime(ts: number): string {
+  return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+}
+
+async function copyHash() {
+  await navigator.clipboard.writeText(props.block.hash)
+  hashCopied.value = true
+  setTimeout(() => {
+    hashCopied.value = false
+  }, 1500)
+}
+
+async function copyPrevHash() {
+  await navigator.clipboard.writeText(props.block.previousHash)
+  prevHashCopied.value = true
+  setTimeout(() => {
+    prevHashCopied.value = false
+  }, 1500)
+}
+</script>
+
 <template>
   <div class="block-detail win95-raised">
     <div class="block-detail__header" @click="expanded = !expanded">
       <span class="block-detail__idx">#{{ block.index }}</span>
 
-      <Win95Badge v-if="block.index === 0" color="warning">Genesis</Win95Badge>
-      <Win95Badge v-else>{{ block.transactions.length }} tx</Win95Badge>
+      <Win95Badge v-if="block.index === 0" color="warning">
+        Genesis
+      </Win95Badge>
+      <Win95Badge v-else>
+        {{ block.transactions.length }} tx
+      </Win95Badge>
 
       <span class="block-detail__hash">{{ block.hash.slice(0, 16) }}...</span>
 
@@ -32,12 +77,16 @@
           <div class="block-detail__field">
             <span class="block-detail__label">Hash:</span>
             <span class="block-detail__value block-detail__value--mono block-detail__value--hash">{{ block.hash }}</span>
-            <button class="block-detail__copy" @click.stop="copyHash">{{ hashCopied ? 'Copied' : 'Copy' }}</button>
+            <button class="block-detail__copy" @click.stop="copyHash">
+              {{ hashCopied ? 'Copied' : 'Copy' }}
+            </button>
           </div>
           <div class="block-detail__field">
             <span class="block-detail__label">Prev Hash:</span>
             <span class="block-detail__value block-detail__value--mono">{{ block.previousHash }}</span>
-            <button class="block-detail__copy" @click.stop="copyPrevHash">{{ prevHashCopied ? 'Copied' : 'Copy' }}</button>
+            <button class="block-detail__copy" @click.stop="copyPrevHash">
+              {{ prevHashCopied ? 'Copied' : 'Copy' }}
+            </button>
           </div>
           <div class="block-detail__field">
             <span class="block-detail__label">Nonce:</span>
@@ -77,46 +126,12 @@
           />
         </div>
       </Win95GroupBox>
-      <div v-else class="block-detail__empty">No transactions in this block</div>
+      <div v-else class="block-detail__empty">
+        No transactions in this block
+      </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { Block } from '~/lib/blockchain'
-import { isValidProof } from '~/lib/blockchain'
-import { useBlockchainStore } from '~/stores/blockchain'
-
-const props = defineProps<{ block: Block }>()
-
-const blockchainStore = useBlockchainStore()
-const expanded = ref(false)
-const hashCopied = ref(false)
-const prevHashCopied = ref(false)
-
-const difficulty = computed(() => blockchainStore.difficulty)
-
-const powValid = computed(() => {
-  if (props.block.index === 0) return true
-  return isValidProof(props.block.hash, difficulty.value)
-})
-
-function formatTime(ts: number): string {
-  return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-}
-
-async function copyHash() {
-  await navigator.clipboard.writeText(props.block.hash)
-  hashCopied.value = true
-  setTimeout(() => { hashCopied.value = false }, 1500)
-}
-
-async function copyPrevHash() {
-  await navigator.clipboard.writeText(props.block.previousHash)
-  prevHashCopied.value = true
-  setTimeout(() => { prevHashCopied.value = false }, 1500)
-}
-</script>
 
 <style scoped>
 .block-detail {

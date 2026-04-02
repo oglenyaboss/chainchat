@@ -26,7 +26,6 @@ export function useMining() {
       rejectCurrent = () => reject(new Error('Mining interrupted'))
 
       miner.onerror = (e) => {
-        console.error('[Mining] Worker error:', e.message)
         isMining.value = false
         worker.value = null
         rejectCurrent = null

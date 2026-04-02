@@ -7,6 +7,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      // eslint-disable-next-line node/prefer-global/process
       signalingUrl: process.env.NUXT_PUBLIC_SIGNALING_URL || 'ws://localhost:3001',
     },
   },

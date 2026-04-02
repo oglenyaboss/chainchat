@@ -1,10 +1,30 @@
+<script setup lang="ts">
+import type { ConnectedPeer } from '~/stores/peers'
+
+defineProps<{
+  peers: ConnectedPeer[]
+}>()
+
+defineEmits<{
+  selectPeer: [publicKey: string]
+}>()
+
+function formatHashrate(h: number): string {
+  if (h === 0)
+    return 'idle'
+  if (h > 1000)
+    return `${(h / 1000).toFixed(1)}kH/s`
+  return `${h} H/s`
+}
+</script>
+
 <template>
   <div class="peer-list">
     <div
       v-for="peer in peers"
       :key="peer.peerId"
       class="peer-list__item"
-      @click="$emit('select-peer', peer.publicKey)"
+      @click="$emit('selectPeer', peer.publicKey)"
     >
       <span class="peer-list__status">&#9679;</span>
       <span class="peer-list__name">{{ peer.nickname }}</span>
@@ -15,24 +35,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { ConnectedPeer } from '~/stores/peers'
-
-defineProps<{
-  peers: ConnectedPeer[]
-}>()
-
-defineEmits<{
-  'select-peer': [publicKey: string]
-}>()
-
-function formatHashrate(h: number): string {
-  if (h === 0) return 'idle'
-  if (h > 1000) return `${(h / 1000).toFixed(1)}kH/s`
-  return `${h} H/s`
-}
-</script>
 
 <style scoped>
 .peer-list__item {

@@ -4,36 +4,54 @@ export interface SignalingEvents {
   onPeerLeft: (peerId: string) => void
 }
 
+const MAX_RECONNECT_ATTEMPTS = 5
+const RECONNECT_DELAY_MS = 3_000
+
 export function useSignaling(events: SignalingEvents) {
   const ws = ref<WebSocket | null>(null)
   const connected = ref(false)
   const manualMode = ref(false)
   const localSDP = ref<string>('')
+  let reconnectAttempts = 0
+  let currentPeerId: string | null = null
 
   function connectRelay(peerId: string) {
+    currentPeerId = peerId
     const config = useRuntimeConfig()
     const socket = new WebSocket(config.public.signalingUrl as string)
 
     socket.onopen = () => {
       connected.value = true
+      reconnectAttempts = 0
       socket.send(JSON.stringify({ type: 'register', peerId }))
     }
 
     socket.onmessage = (event) => {
-      const msg = JSON.parse(event.data as string)
+      let msg: Record<string, unknown>
+      try {
+        msg = JSON.parse(event.data as string)
+      }
+      catch {
+        return
+      }
+
       if (msg.type === 'peers') {
-        events.onPeerList(msg.peerIds)
+        events.onPeerList(msg.peerIds as string[])
       }
       else if (msg.type === 'signal') {
-        events.onSignal(msg.from, msg.signal)
+        events.onSignal(msg.from as string, msg.signal as RTCSessionDescriptionInit | RTCIceCandidateInit)
       }
       else if (msg.type === 'peer-left') {
-        events.onPeerLeft(msg.peerId)
+        events.onPeerLeft(msg.peerId as string)
       }
     }
 
     socket.onclose = () => {
       connected.value = false
+      if (currentPeerId && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+        reconnectAttempts++
+        setTimeout(() => connectRelay(currentPeerId!), RECONNECT_DELAY_MS)
+      }
     }
 
     ws.value = socket
@@ -46,6 +64,7 @@ export function useSignaling(events: SignalingEvents) {
   }
 
   function disconnect() {
+    currentPeerId = null
     ws.value?.close()
     ws.value = null
     connected.value = false
