@@ -91,6 +91,10 @@ Open in two browser tabs to see P2P messaging in action.
 - Node.js 22+
 - Modern browser with WebRTC support (Chrome, Firefox, Edge, Safari 15+)
 
+### Troubleshooting
+
+> **Can't connect to peers / "solo mode"?** Stale identity data in localStorage can prevent WebRTC handshakes from completing. Fix: open **Settings > Danger Zone > Reset Identity**, then reload the page.
+
 ## Scripts
 
 | Command | Description |
