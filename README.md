@@ -3,9 +3,23 @@
 [![CI](https://github.com/oglenyaboss/chainchat/actions/workflows/ci.yml/badge.svg)](https://github.com/oglenyaboss/chainchat/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
+**[Live Demo](https://chainchat-two.vercel.app/)**
+
 A peer-to-peer blockchain messenger with a Windows 95 desktop interface.
 
+![Desktop](docs/desktop.png)
+![Chat](docs/chat.png)
+![Block Explorer](docs/explorer.png)
+
 Every message is a cryptographically signed transaction, mined into blocks via Proof of Work, and delivered over a WebRTC mesh network. No servers store your messages — peers relay them directly.
+
+## Why
+
+I had a Nuxt.js course at university. I'd been writing Next.js for about two years at that point, so the standard curriculum didn't feel like a challenge. Instead of doing the bare minimum, I decided to push the limits of what you can build entirely in the browser — no backend database, no message queue, no centralized anything.
+
+The result is a full blockchain implementation running client-side: Proof of Work mining in a Web Worker, WebRTC mesh networking between peers, ECDSA/ECDH cryptography via the native Web Crypto API, and a complete Windows 95 desktop environment as the UI. The only server is a tiny WebSocket relay (~50 lines) that helps peers find each other — after that, everything is direct.
+
+This is a sibling project to [llmshowcase](https://github.com/oglenyaboss/llmshowcase), where I explored running LLM inference directly in the browser. Same idea — take something that "should" need a server and prove it doesn't.
 
 ## Features
 
