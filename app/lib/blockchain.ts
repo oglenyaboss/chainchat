@@ -16,7 +16,7 @@ export interface Transaction {
 export const MAX_TRANSACTIONS_PER_BLOCK = 20
 export const DIFFICULTY_ADJUSTMENT_INTERVAL = 5
 export const TARGET_BLOCK_TIME_MS = 10_000
-export const MIN_DIFFICULTY = 2
+export const MIN_DIFFICULTY = 5
 export const MAX_DIFFICULTY = 6
 
 export interface Block {

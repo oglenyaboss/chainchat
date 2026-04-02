@@ -1,6 +1,7 @@
 import { WebSocketServer } from 'ws'
 
-const wss = new WebSocketServer({ port: 3001 })
+const port = parseInt(process.env.PORT || '3001', 10)
+const wss = new WebSocketServer({ port })
 const clients = new Map()
 
 wss.on('connection', (ws) => {
@@ -37,4 +38,4 @@ wss.on('connection', (ws) => {
   })
 })
 
-console.log('Signaling server running on ws://localhost:3001')
+console.log(`Signaling server running on port ${port}`)

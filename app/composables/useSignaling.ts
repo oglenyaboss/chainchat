@@ -11,7 +11,8 @@ export function useSignaling(events: SignalingEvents) {
   const localSDP = ref<string>('')
 
   function connectRelay(peerId: string) {
-    const socket = new WebSocket('ws://localhost:3001')
+    const config = useRuntimeConfig()
+    const socket = new WebSocket(config.public.signalingUrl as string)
 
     socket.onopen = () => {
       connected.value = true

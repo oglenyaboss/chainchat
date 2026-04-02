@@ -4,4 +4,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt'],
   css: ['~/assets/css/main.css'],
+
+  runtimeConfig: {
+    public: {
+      signalingUrl: process.env.NUXT_PUBLIC_SIGNALING_URL || 'ws://localhost:3001',
+    },
+  },
 })

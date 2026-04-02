@@ -14,7 +14,7 @@ import type { OrphanPool } from '~/lib/orphan-pool'
 export const useBlockchainStore = defineStore('blockchain-v2', () => {
   const chain = ref<Block[]>([createGenesisBlock()])
   const pendingTransactions = ref<Transaction[]>([])
-  const difficulty = ref(3)
+  const difficulty = ref(5)
 
   const latestBlock = computed(() => chain.value[chain.value.length - 1]!)
   const allTransactions = computed(() =>
