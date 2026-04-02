@@ -1,0 +1,122 @@
+/* ==============================
+   Windows 95 Design System
+   ============================== */
+
+/* --- Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
+
+/* --- Design Tokens --- */
+:root {
+  --win95-surface: #C0C0C0;
+  --win95-desktop: #008080;
+  --win95-titlebar: #000080;
+  --win95-titlebar-inactive: #808080;
+  --win95-titlebar-text: #FFFFFF;
+  --win95-text: #000000;
+  --win95-highlight: #FFFFFF;
+  --win95-shadow: #808080;
+  --win95-dark-shadow: #404040;
+  --win95-button-face: #C0C0C0;
+  --win95-selected: #000080;
+  --win95-selected-text: #FFFFFF;
+  --win95-input-bg: #FFFFFF;
+  --win95-link: #0000FF;
+  --win95-tooltip-bg: #FFFFE1;
+  --win95-success: #16A34A;
+  --win95-warning: #D97706;
+  --win95-danger: #DC2626;
+
+  --win95-font-ui: 'Silkscreen', 'MS Sans Serif', Arial, sans-serif;
+  --win95-font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --win95-taskbar-height: 40px;
+}
+
+/* --- Reset for Win95 --- */
+html {
+  font-family: var(--win95-font-ui);
+  font-size: 12px;
+  color: var(--win95-text);
+  background: var(--win95-desktop);
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--win95-desktop);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* --- 3D Border Utilities --- */
+.win95-raised {
+  border-top: 2px solid var(--win95-highlight);
+  border-left: 2px solid var(--win95-highlight);
+  border-right: 2px solid var(--win95-dark-shadow);
+  border-bottom: 2px solid var(--win95-dark-shadow);
+  box-shadow: inset -1px -1px 0 var(--win95-shadow), inset 1px 1px 0 var(--win95-highlight);
+}
+
+.win95-inset {
+  border-top: 2px solid var(--win95-shadow);
+  border-left: 2px solid var(--win95-shadow);
+  border-right: 2px solid var(--win95-highlight);
+  border-bottom: 2px solid var(--win95-highlight);
+  box-shadow: inset -1px -1px 0 var(--win95-highlight), inset 1px 1px 0 var(--win95-dark-shadow);
+}
+
+.win95-window-border {
+  border: 1px solid var(--win95-text);
+  outline: 1px solid var(--win95-dark-shadow);
+}
+
+/* --- Scrollbar (Webkit) --- */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: repeating-conic-gradient(var(--win95-surface) 0% 25%, #FFFFFF 0% 50%) 50% / 2px 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--win95-surface);
+  border-top: 2px solid var(--win95-highlight);
+  border-left: 2px solid var(--win95-highlight);
+  border-right: 2px solid var(--win95-dark-shadow);
+  border-bottom: 2px solid var(--win95-dark-shadow);
+}
+
+::-webkit-scrollbar-button {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: var(--win95-surface);
+  border-top: 2px solid var(--win95-highlight);
+  border-left: 2px solid var(--win95-highlight);
+  border-right: 2px solid var(--win95-dark-shadow);
+  border-bottom: 2px solid var(--win95-dark-shadow);
+}
+
+/* --- Selection --- */
+::selection {
+  background: var(--win95-selected);
+  color: var(--win95-selected-text);
+}
+
+/* --- Grain Texture Overlay --- */
+.win95-grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
