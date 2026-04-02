@@ -71,11 +71,9 @@ export function useNodeStateMachine() {
     const allowed = TRANSITIONS[current]
 
     if (!allowed.includes(newState)) {
-      console.warn(`[StateMachine] Invalid transition: ${current} → ${newState}`)
       return
     }
 
-    console.log(`[StateMachine] ${current} → ${newState}`)
     nodeStateStore.setState(newState)
     onEnterState(newState)
   }
@@ -105,7 +103,6 @@ export function useNodeStateMachine() {
     // Solo mode timeout — if no peers connect within 10s, go to READY
     setTimeout(() => {
       if (nodeStateStore.state === 'CONNECTING') {
-        console.log('[StateMachine] No peers found, entering solo mode')
         transitionTo('READY')
       }
     }, SOLO_MODE_TIMEOUT_MS)

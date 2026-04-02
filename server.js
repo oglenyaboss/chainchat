@@ -3,7 +3,7 @@ import { WebSocketServer } from 'ws'
 
 const port = parseInt(process.env.PORT || '3001', 10)
 
-const httpServer = createServer((req, res) => {
+const httpServer = createServer((_req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' })
   res.end('chainchat signaling server')
 })

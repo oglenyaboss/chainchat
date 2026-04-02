@@ -8,8 +8,8 @@ Every message is a cryptographically signed transaction, mined into blocks via P
 
 - **Blockchain** — PoW mining with dynamic difficulty adjustment, fork resolution, orphan pool, transaction deduplication
 - **P2P Networking** — WebRTC data channels for direct peer communication, WebSocket signaling server for peer discovery
-- **Cryptography** — ECDSA keypair identity, message signing and verification, on-chain name registry
-- **Win95 Desktop** — draggable/resizable windows, taskbar, start menu, desktop icons — 19 UI components
+- **Cryptography** — ECDSA keypair identity, ECDH key exchange, AES-GCM encrypted DMs, message signing and verification, on-chain name registry
+- **Win95 Desktop** — draggable/resizable windows, taskbar, start menu, desktop icons
 - **Apps** — Chat, Block Explorer, Network monitor, Settings, About
 
 ## Tech Stack
@@ -17,7 +17,7 @@ Every message is a cryptographically signed transaction, mined into blocks via P
 - **Nuxt 4** + **Vue 3** + **TypeScript**
 - **Pinia** with persisted state
 - **Tailwind CSS 4**
-- **Web Workers** for mining
+- **Web Workers** for off-thread mining
 - **WebRTC** for P2P mesh
 - **WebSocket** signaling server
 
@@ -27,13 +27,21 @@ Every message is a cryptographically signed transaction, mined into blocks via P
 # Install dependencies
 npm install
 
+# Copy environment config
+cp .env.example .env
+
 # Start signaling server + dev server
 npm run dev:all
 ```
 
 The app runs at `http://localhost:3000`, signaling server at `ws://localhost:3001`.
 
-Open in two browser tabs to see P2P in action.
+Open in two browser tabs to see P2P messaging in action.
+
+### Requirements
+
+- Node.js 22+
+- Modern browser with WebRTC support (Chrome, Firefox, Edge, Safari 15+)
 
 ## Project Structure
 
@@ -51,6 +59,15 @@ app/
   workers/       # Mining web worker
 server.js        # WebSocket signaling server
 ```
+
+## Deployment
+
+The signaling server deploys separately from the Nuxt frontend:
+
+- **Frontend** — any static host or Nuxt-compatible platform
+- **Signaling server** — Railway (uses `Dockerfile` and `server.js`)
+
+Set `NUXT_PUBLIC_SIGNALING_URL` to point the frontend at the deployed signaling server.
 
 ## License
 

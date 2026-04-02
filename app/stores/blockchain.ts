@@ -94,11 +94,6 @@ export const useBlockchainStore = defineStore('blockchain-v2', () => {
     return true
   }
 
-  /** @deprecated Use replaceChainIfBetter for deterministic fork resolution */
-  async function replaceChain(newChain: Block[]): Promise<boolean> {
-    return replaceChainIfBetter(newChain)
-  }
-
   function getTransactionsForAddress(publicKey: string): Transaction[] {
     return allTransactions.value.filter(
       tx => tx.from === publicKey || tx.to === publicKey || tx.to === 'broadcast',
@@ -128,7 +123,6 @@ export const useBlockchainStore = defineStore('blockchain-v2', () => {
     removePendingTransactions,
     addBlock,
     addBlockWithOrphans,
-    replaceChain,
     replaceChainIfBetter,
     getTransactionsForAddress,
     getNameForKey,
