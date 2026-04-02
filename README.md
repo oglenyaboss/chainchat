@@ -7,9 +7,16 @@
 
 A peer-to-peer blockchain messenger with a Windows 95 desktop interface.
 
+![All windows open](docs/all-windows.png)
+
+<details>
+<summary>More screenshots</summary>
+
 ![Desktop](docs/desktop.png)
 ![Chat](docs/chat.png)
 ![Block Explorer](docs/explorer.png)
+
+</details>
 
 Every message is a cryptographically signed transaction, mined into blocks via Proof of Work, and delivered over a WebRTC mesh network. No servers store your messages — peers relay them directly.
 
