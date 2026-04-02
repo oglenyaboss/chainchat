@@ -1,17 +1,3 @@
-<template>
-  <input
-    :value="modelValue"
-    :placeholder="placeholder"
-    :readonly="readonly"
-    :disabled="disabled"
-    :type="type"
-    class="win95-input"
-    :class="{ 'win95-input--readonly': readonly }"
-    @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-    v-bind="$attrs"
-  />
-</template>
-
 <script setup lang="ts">
 defineProps<{
   modelValue?: string | number
@@ -25,6 +11,20 @@ defineEmits<{
   'update:modelValue': [value: string]
 }>()
 </script>
+
+<template>
+  <input
+    :value="modelValue"
+    :placeholder="placeholder"
+    :readonly="readonly"
+    :disabled="disabled"
+    :type="type"
+    class="win95-input"
+    :class="{ 'win95-input--readonly': readonly }"
+    v-bind="$attrs"
+    @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+  >
+</template>
 
 <style scoped>
 .win95-input {

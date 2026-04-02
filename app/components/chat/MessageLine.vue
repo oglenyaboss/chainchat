@@ -1,13 +1,3 @@
-<template>
-  <div class="msg-line" :class="{ 'msg-line--own': isOwn, 'msg-line--system': message.fromNickname === 'SYSTEM' }">
-    <span class="msg-line__time">{{ formatTime(message.timestamp) }}</span>
-    <span class="msg-line__nick" :class="{ 'msg-line__nick--own': isOwn }">&lt;{{ message.fromNickname }}&gt;</span>
-    <span class="msg-line__text">{{ message.content }}</span>
-    <span v-if="message.blockIndex !== null" class="msg-line__confirmed" title="Confirmed in block">[&#10003;#{{ message.blockIndex }}]</span>
-    <span v-else class="msg-line__pending" title="Pending">[...]</span>
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { ChatMessage } from '~/stores/chat'
 
@@ -20,6 +10,16 @@ function formatTime(ts: number): string {
   return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
 }
 </script>
+
+<template>
+  <div class="msg-line" :class="{ 'msg-line--own': isOwn, 'msg-line--system': message.fromNickname === 'SYSTEM' }">
+    <span class="msg-line__time">{{ formatTime(message.timestamp) }}</span>
+    <span class="msg-line__nick" :class="{ 'msg-line__nick--own': isOwn }">&lt;{{ message.fromNickname }}&gt;</span>
+    <span class="msg-line__text">{{ message.content }}</span>
+    <span v-if="message.blockIndex !== null" class="msg-line__confirmed" title="Confirmed in block">[&#10003;#{{ message.blockIndex }}]</span>
+    <span v-else class="msg-line__pending" title="Pending">[...]</span>
+  </div>
+</template>
 
 <style scoped>
 .msg-line {

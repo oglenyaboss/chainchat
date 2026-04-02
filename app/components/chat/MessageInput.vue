@@ -1,16 +1,3 @@
-<template>
-  <form class="msg-input" @submit.prevent="send">
-    <Win95Input
-      v-model="text"
-      placeholder="Type a message..."
-      class="msg-input__field"
-    />
-    <Win95Button type="submit" :disabled="!text.trim()">
-      Send
-    </Win95Button>
-  </form>
-</template>
-
 <script setup lang="ts">
 const emit = defineEmits<{
   send: [message: string]
@@ -25,6 +12,19 @@ function send() {
   }
 }
 </script>
+
+<template>
+  <form class="msg-input" @submit.prevent="send">
+    <Win95Input
+      v-model="text"
+      placeholder="Type a message..."
+      class="msg-input__field"
+    />
+    <Win95Button type="submit" :disabled="!text.trim()">
+      Send
+    </Win95Button>
+  </form>
+</template>
 
 <style scoped>
 .msg-input {

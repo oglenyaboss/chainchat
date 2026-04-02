@@ -1,3 +1,79 @@
+<script setup lang="ts">
+import { validateBlock } from '~/lib/blockchain'
+import { useBlockchainStore } from '~/stores/blockchain'
+import { useNodeStateStore } from '~/stores/node-state'
+
+const blockchainStore = useBlockchainStore()
+const nodeState = useNodeStateStore()
+
+const validating = ref(false)
+const validationProgress = ref(0)
+const validationResult = ref<boolean | null>(null)
+
+const registeredNames = computed(() =>
+  Array.from(blockchainStore.nameRegistry.values()),
+)
+
+const avgBlockTime = computed(() => {
+  const chain = blockchainStore.chain
+  if (chain.length < 2)
+    return 'N/A'
+  const count = Math.min(chain.length - 1, 10)
+  const recent = chain.slice(-count - 1)
+  let totalMs = 0
+  for (let i = 1; i < recent.length; i++) {
+    totalMs += recent[i]!.timestamp - recent[i - 1]!.timestamp
+  }
+  const avgMs = totalMs / count
+  return `${(avgMs / 1000).toFixed(1)}s`
+})
+
+function formatHashrate(h: number): string {
+  if (h === 0)
+    return '0 H/s'
+  if (h >= 1000)
+    return `${(h / 1000).toFixed(1)} kH/s`
+  return `${h.toFixed(0)} H/s`
+}
+
+function shortKey(key: string): string {
+  try {
+    const parsed = JSON.parse(key)
+    const x = (parsed.x || '') as string
+    return `${x.slice(0, 8)}...${x.slice(-4)}`
+  }
+  catch {
+    return `${key.slice(0, 12)}...`
+  }
+}
+
+async function runValidation() {
+  validating.value = true
+  validationProgress.value = 0
+  validationResult.value = null
+
+  const chain = blockchainStore.chain
+  let allValid = true
+
+  for (let i = 0; i < chain.length; i++) {
+    const prev = i > 0 ? (chain[i - 1] ?? null) : null
+    const valid = await validateBlock(chain[i]!, prev)
+    if (!valid) {
+      allValid = false
+      break
+    }
+    validationProgress.value = Math.round(((i + 1) / chain.length) * 100)
+    // Yield to UI
+    if (i % 5 === 0) {
+      await new Promise(resolve => setTimeout(resolve, 0))
+    }
+  }
+
+  validationResult.value = allValid
+  validating.value = false
+}
+</script>
+
 <template>
   <div class="overview">
     <div class="overview__stats">
@@ -99,79 +175,6 @@
     </Win95GroupBox>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useBlockchainStore } from '~/stores/blockchain'
-import { useNodeStateStore } from '~/stores/node-state'
-import { validateBlock } from '~/lib/blockchain'
-
-const blockchainStore = useBlockchainStore()
-const nodeState = useNodeStateStore()
-
-const validating = ref(false)
-const validationProgress = ref(0)
-const validationResult = ref<boolean | null>(null)
-
-const registeredNames = computed(() =>
-  Array.from(blockchainStore.nameRegistry.values()),
-)
-
-const avgBlockTime = computed(() => {
-  const chain = blockchainStore.chain
-  if (chain.length < 2) return 'N/A'
-  const count = Math.min(chain.length - 1, 10)
-  const recent = chain.slice(-count - 1)
-  let totalMs = 0
-  for (let i = 1; i < recent.length; i++) {
-    totalMs += recent[i]!.timestamp - recent[i - 1]!.timestamp
-  }
-  const avgMs = totalMs / count
-  return `${(avgMs / 1000).toFixed(1)}s`
-})
-
-function formatHashrate(h: number): string {
-  if (h === 0) return '0 H/s'
-  if (h >= 1000) return `${(h / 1000).toFixed(1)} kH/s`
-  return `${h.toFixed(0)} H/s`
-}
-
-function shortKey(key: string): string {
-  try {
-    const parsed = JSON.parse(key)
-    const x = (parsed.x || '') as string
-    return `${x.slice(0, 8)}...${x.slice(-4)}`
-  }
-  catch {
-    return key.slice(0, 12) + '...'
-  }
-}
-
-async function runValidation() {
-  validating.value = true
-  validationProgress.value = 0
-  validationResult.value = null
-
-  const chain = blockchainStore.chain
-  let allValid = true
-
-  for (let i = 0; i < chain.length; i++) {
-    const prev = i > 0 ? (chain[i - 1] ?? null) : null
-    const valid = await validateBlock(chain[i]!, prev)
-    if (!valid) {
-      allValid = false
-      break
-    }
-    validationProgress.value = Math.round(((i + 1) / chain.length) * 100)
-    // Yield to UI
-    if (i % 5 === 0) {
-      await new Promise(resolve => setTimeout(resolve, 0))
-    }
-  }
-
-  validationResult.value = allValid
-  validating.value = false
-}
-</script>
 
 <style scoped>
 .overview {

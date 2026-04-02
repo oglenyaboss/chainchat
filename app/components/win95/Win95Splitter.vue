@@ -1,13 +1,3 @@
-<template>
-  <div
-    class="win95-splitter"
-    :class="{ 'win95-splitter--dragging': isDragging }"
-    @mousedown.prevent="startDrag"
-  >
-    <div class="win95-splitter__groove" />
-  </div>
-</template>
-
 <script setup lang="ts">
 const emit = defineEmits<{
   drag: [delta: number]
@@ -39,6 +29,16 @@ function startDrag(e: MouseEvent): void {
   document.addEventListener('mouseup', onMouseUp)
 }
 </script>
+
+<template>
+  <div
+    class="win95-splitter"
+    :class="{ 'win95-splitter--dragging': isDragging }"
+    @mousedown.prevent="startDrag"
+  >
+    <div class="win95-splitter__groove" />
+  </div>
+</template>
 
 <style scoped>
 .win95-splitter {

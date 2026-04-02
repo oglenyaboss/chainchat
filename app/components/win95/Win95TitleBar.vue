@@ -1,20 +1,3 @@
-<template>
-  <div class="win95-titlebar" :class="{ 'win95-titlebar--inactive': !active }">
-    <span class="win95-titlebar__title">{{ title }}</span>
-    <div class="win95-titlebar__controls">
-      <button v-if="minimizable" class="win95-titlebar__btn" @click="$emit('minimize')">
-        <span class="win95-titlebar__icon">&#9472;</span>
-      </button>
-      <button v-if="maximizable" class="win95-titlebar__btn" @click="$emit('maximize')">
-        <span class="win95-titlebar__icon">&#9744;</span>
-      </button>
-      <button v-if="closable" class="win95-titlebar__btn win95-titlebar__btn--close" @click="$emit('close')">
-        <span class="win95-titlebar__icon">&times;</span>
-      </button>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 withDefaults(defineProps<{
   title: string
@@ -35,6 +18,23 @@ defineEmits<{
   close: []
 }>()
 </script>
+
+<template>
+  <div class="win95-titlebar" :class="{ 'win95-titlebar--inactive': !active }">
+    <span class="win95-titlebar__title">{{ title }}</span>
+    <div class="win95-titlebar__controls">
+      <button v-if="minimizable" class="win95-titlebar__btn" @click="$emit('minimize')">
+        <span class="win95-titlebar__icon">&#9472;</span>
+      </button>
+      <button v-if="maximizable" class="win95-titlebar__btn" @click="$emit('maximize')">
+        <span class="win95-titlebar__icon">&#9744;</span>
+      </button>
+      <button v-if="closable" class="win95-titlebar__btn win95-titlebar__btn--close" @click="$emit('close')">
+        <span class="win95-titlebar__icon">&times;</span>
+      </button>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .win95-titlebar {

@@ -91,7 +91,8 @@ export const useWindowManagerStore = defineStore('window-manager', () => {
 
   function focusWindow(id: string): void {
     const win = windows.value.find(w => w.id === id)
-    if (!win) return
+    if (!win)
+      return
     // Direct mutation for performance (called on every click)
     win.zIndex = nextZIndex++
     activeWindowId.value = id
@@ -99,7 +100,8 @@ export const useWindowManagerStore = defineStore('window-manager', () => {
 
   function minimizeWindow(id: string): void {
     const win = windows.value.find(w => w.id === id)
-    if (!win) return
+    if (!win)
+      return
     win.minimized = true
     if (activeWindowId.value === id) {
       activateTopWindow()
@@ -108,13 +110,15 @@ export const useWindowManagerStore = defineStore('window-manager', () => {
 
   function toggleMaximize(id: string): void {
     const win = windows.value.find(w => w.id === id)
-    if (!win) return
+    if (!win)
+      return
     win.maximized = !win.maximized
   }
 
   function restoreWindow(id: string): void {
     const win = windows.value.find(w => w.id === id)
-    if (!win) return
+    if (!win)
+      return
     win.minimized = false
     focusWindow(id)
   }
@@ -122,7 +126,8 @@ export const useWindowManagerStore = defineStore('window-manager', () => {
   // Direct mutation for drag performance (called at ~60fps during drag)
   function moveWindow(id: string, x: number, y: number): void {
     const win = windows.value.find(w => w.id === id)
-    if (!win) return
+    if (!win)
+      return
     win.x = x
     win.y = y
   }
@@ -130,10 +135,11 @@ export const useWindowManagerStore = defineStore('window-manager', () => {
   // Direct mutation for resize performance (called at ~60fps during resize)
   function resizeWindow(
     id: string,
-    rect: { x: number; y: number; width: number; height: number },
+    rect: { x: number, y: number, width: number, height: number },
   ): void {
     const win = windows.value.find(w => w.id === id)
-    if (!win) return
+    if (!win)
+      return
     win.x = rect.x
     win.y = rect.y
     win.width = Math.max(win.minWidth, rect.width)
@@ -142,7 +148,8 @@ export const useWindowManagerStore = defineStore('window-manager', () => {
 
   function toggleMinimize(id: string): void {
     const win = windows.value.find(w => w.id === id)
-    if (!win) return
+    if (!win)
+      return
     if (win.minimized) {
       restoreWindow(id)
     }

@@ -1,7 +1,8 @@
 import { useIdentityStore } from '~/stores/identity'
 
 export default defineNuxtRouteMiddleware(() => {
-  if (import.meta.server) return
+  if (import.meta.server)
+    return
 
   const identityStore = useIdentityStore()
 

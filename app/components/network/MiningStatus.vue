@@ -1,3 +1,19 @@
+<script setup lang="ts">
+defineProps<{
+  isMining: boolean
+  hashrate: number
+  nonce: number
+}>()
+
+function formatHashrate(h: number): string {
+  if (h > 1_000_000)
+    return `${(h / 1_000_000).toFixed(1)} MH/s`
+  if (h > 1_000)
+    return `${(h / 1_000).toFixed(1)} kH/s`
+  return `${h} H/s`
+}
+</script>
+
 <template>
   <div class="mining-status win95-raised">
     <span class="mining-status__icon">{{ isMining ? '&#9935;' : '&#128564;' }}</span>
@@ -9,20 +25,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  isMining: boolean
-  hashrate: number
-  nonce: number
-}>()
-
-function formatHashrate(h: number): string {
-  if (h > 1_000_000) return `${(h / 1_000_000).toFixed(1)} MH/s`
-  if (h > 1_000) return `${(h / 1_000).toFixed(1)} kH/s`
-  return `${h} H/s`
-}
-</script>
 
 <style scoped>
 .mining-status {

@@ -1,18 +1,3 @@
-<template>
-  <div class="chain-view win95-inset" ref="scrollContainer">
-    <div class="chain-view__inner">
-      <div v-for="(block, i) in blocks" :key="block.hash" class="chain-view__item">
-        <div class="chain-view__block win95-raised">
-          <div class="chain-view__block-idx">#{{ block.index }}</div>
-          <div class="chain-view__block-hash">{{ block.hash.slice(0, 8) }}...</div>
-          <div class="chain-view__block-txns">{{ block.transactions.length }} tx</div>
-        </div>
-        <div v-if="i < blocks.length - 1" class="chain-view__arrow">&#9654;</div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { Block } from '~/lib/blockchain'
 
@@ -28,6 +13,29 @@ watch(() => props.blocks.length, () => {
   })
 })
 </script>
+
+<template>
+  <div ref="scrollContainer" class="chain-view win95-inset">
+    <div class="chain-view__inner">
+      <div v-for="(block, i) in blocks" :key="block.hash" class="chain-view__item">
+        <div class="chain-view__block win95-raised">
+          <div class="chain-view__block-idx">
+            #{{ block.index }}
+          </div>
+          <div class="chain-view__block-hash">
+            {{ block.hash.slice(0, 8) }}...
+          </div>
+          <div class="chain-view__block-txns">
+            {{ block.transactions.length }} tx
+          </div>
+        </div>
+        <div v-if="i < blocks.length - 1" class="chain-view__arrow">
+          &#9654;
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .chain-view {

@@ -1,10 +1,6 @@
-<template>
-  <div />
-</template>
-
 <script setup lang="ts">
-import { useWindowManagerStore } from '~/stores/window-manager'
 import { getAppConfig } from '~/lib/app-registry'
+import { useWindowManagerStore } from '~/stores/window-manager'
 
 definePageMeta({
   layout: 'desktop',
@@ -15,7 +11,12 @@ const router = useRouter()
 
 onMounted(() => {
   const config = getAppConfig('chat')
-  if (config) wmStore.openWindow(config)
+  if (config)
+    wmStore.openWindow(config)
   router.replace('/')
 })
 </script>
+
+<template>
+  <div />
+</template>

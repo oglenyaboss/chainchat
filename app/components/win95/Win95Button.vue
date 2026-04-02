@@ -1,7 +1,13 @@
+<script setup lang="ts">
+defineProps<{
+  variant?: 'default' | 'primary'
+  disabled?: boolean
+}>()
+</script>
+
 <template>
   <button
-    :class="[
-      'win95-btn',
+    class="win95-btn" :class="[
       { 'win95-btn--primary': variant === 'primary' },
       { 'win95-btn--disabled': disabled },
     ]"
@@ -11,13 +17,6 @@
     <slot />
   </button>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  variant?: 'default' | 'primary'
-  disabled?: boolean
-}>()
-</script>
 
 <style scoped>
 .win95-btn {

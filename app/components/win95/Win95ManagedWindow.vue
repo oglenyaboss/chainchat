@@ -1,3 +1,146 @@
+<script setup lang="ts">
+import type { WindowState } from '~/stores/window-manager'
+import { useWindowManagerStore } from '~/stores/window-manager'
+
+const props = defineProps<{
+  win: WindowState
+}>()
+
+const wmStore = useWindowManagerStore()
+
+const isActive = computed(() => wmStore.activeWindowId === props.win.id)
+
+const windowStyle = computed(() => {
+  if (props.win.maximized) {
+    return {
+      position: 'absolute' as const,
+      left: '0',
+      top: '0',
+      width: '100%',
+      height: '100%',
+      zIndex: props.win.zIndex,
+    }
+  }
+  return {
+    position: 'absolute' as const,
+    left: `${props.win.x}px`,
+    top: `${props.win.y}px`,
+    width: `${props.win.width}px`,
+    height: `${props.win.height}px`,
+    zIndex: props.win.zIndex,
+  }
+})
+
+function startDrag(e: MouseEvent): void {
+  if (props.win.maximized)
+    return
+
+  wmStore.focusWindow(props.win.id)
+
+  const startX = e.clientX
+  const startY = e.clientY
+  const startWinX = props.win.x
+  const startWinY = props.win.y
+
+  function onMouseMove(ev: MouseEvent): void {
+    const dx = ev.clientX - startX
+    const dy = ev.clientY - startY
+    wmStore.moveWindow(
+      props.win.id,
+      startWinX + dx,
+      Math.max(0, startWinY + dy),
+    )
+  }
+
+  function onMouseUp(): void {
+    document.body.style.userSelect = ''
+    document.body.style.cursor = ''
+    document.removeEventListener('mousemove', onMouseMove)
+    document.removeEventListener('mouseup', onMouseUp)
+  }
+
+  document.body.style.userSelect = 'none'
+  document.body.style.cursor = 'move'
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+}
+
+function startResize(e: MouseEvent, dir: string): void {
+  if (props.win.maximized)
+    return
+
+  wmStore.focusWindow(props.win.id)
+
+  const startX = e.clientX
+  const startY = e.clientY
+  const startRect = {
+    x: props.win.x,
+    y: props.win.y,
+    width: props.win.width,
+    height: props.win.height,
+  }
+
+  const cursorMap: Record<string, string> = {
+    n: 'ns-resize',
+    s: 'ns-resize',
+    e: 'ew-resize',
+    w: 'ew-resize',
+    ne: 'nesw-resize',
+    nw: 'nwse-resize',
+    se: 'nwse-resize',
+    sw: 'nesw-resize',
+  }
+
+  function onMouseMove(ev: MouseEvent): void {
+    const dx = ev.clientX - startX
+    const dy = ev.clientY - startY
+
+    let { x, y, width, height } = startRect
+
+    if (dir.includes('e'))
+      width = startRect.width + dx
+    if (dir.includes('w')) {
+      width = startRect.width - dx
+      x = startRect.x + dx
+    }
+    if (dir.includes('s'))
+      height = startRect.height + dy
+    if (dir.includes('n')) {
+      height = startRect.height - dy
+      y = startRect.y + dy
+    }
+
+    const minW = props.win.minWidth
+    const minH = props.win.minHeight
+
+    if (width < minW) {
+      if (dir.includes('w'))
+        x = startRect.x + startRect.width - minW
+      width = minW
+    }
+    if (height < minH) {
+      if (dir.includes('n'))
+        y = startRect.y + startRect.height - minH
+      height = minH
+    }
+
+    wmStore.resizeWindow(props.win.id, { x, y, width, height })
+  }
+
+  function onMouseUp(): void {
+    document.body.style.userSelect = ''
+    document.body.style.cursor = ''
+    document.removeEventListener('mousemove', onMouseMove)
+    document.removeEventListener('mouseup', onMouseUp)
+  }
+
+  document.body.style.userSelect = 'none'
+  document.body.style.cursor = cursorMap[dir] ?? 'default'
+  document.addEventListener('mousemove', onMouseMove)
+  document.addEventListener('mouseup', onMouseUp)
+}
+</script>
+
 <template>
   <div
     v-show="!win.minimized"
@@ -53,143 +196,6 @@
     <div v-if="!win.maximized" class="mw__grip" />
   </div>
 </template>
-
-<script setup lang="ts">
-import type { WindowState } from '~/stores/window-manager'
-import { useWindowManagerStore } from '~/stores/window-manager'
-
-const props = defineProps<{
-  win: WindowState
-}>()
-
-const wmStore = useWindowManagerStore()
-
-const isActive = computed(() => wmStore.activeWindowId === props.win.id)
-
-const windowStyle = computed(() => {
-  if (props.win.maximized) {
-    return {
-      position: 'absolute' as const,
-      left: '0',
-      top: '0',
-      width: '100%',
-      height: '100%',
-      zIndex: props.win.zIndex,
-    }
-  }
-  return {
-    position: 'absolute' as const,
-    left: `${props.win.x}px`,
-    top: `${props.win.y}px`,
-    width: `${props.win.width}px`,
-    height: `${props.win.height}px`,
-    zIndex: props.win.zIndex,
-  }
-})
-
-function startDrag(e: MouseEvent): void {
-  if (props.win.maximized) return
-
-  wmStore.focusWindow(props.win.id)
-
-  const startX = e.clientX
-  const startY = e.clientY
-  const startWinX = props.win.x
-  const startWinY = props.win.y
-
-  function onMouseMove(ev: MouseEvent): void {
-    const dx = ev.clientX - startX
-    const dy = ev.clientY - startY
-    wmStore.moveWindow(
-      props.win.id,
-      startWinX + dx,
-      Math.max(0, startWinY + dy),
-    )
-  }
-
-  function onMouseUp(): void {
-    document.body.style.userSelect = ''
-    document.body.style.cursor = ''
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
-
-  document.body.style.userSelect = 'none'
-  document.body.style.cursor = 'move'
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
-
-function startResize(e: MouseEvent, dir: string): void {
-  if (props.win.maximized) return
-
-  wmStore.focusWindow(props.win.id)
-
-  const startX = e.clientX
-  const startY = e.clientY
-  const startRect = {
-    x: props.win.x,
-    y: props.win.y,
-    width: props.win.width,
-    height: props.win.height,
-  }
-
-  const cursorMap: Record<string, string> = {
-    n: 'ns-resize',
-    s: 'ns-resize',
-    e: 'ew-resize',
-    w: 'ew-resize',
-    ne: 'nesw-resize',
-    nw: 'nwse-resize',
-    se: 'nwse-resize',
-    sw: 'nesw-resize',
-  }
-
-  function onMouseMove(ev: MouseEvent): void {
-    const dx = ev.clientX - startX
-    const dy = ev.clientY - startY
-
-    let { x, y, width, height } = startRect
-
-    if (dir.includes('e')) width = startRect.width + dx
-    if (dir.includes('w')) {
-      width = startRect.width - dx
-      x = startRect.x + dx
-    }
-    if (dir.includes('s')) height = startRect.height + dy
-    if (dir.includes('n')) {
-      height = startRect.height - dy
-      y = startRect.y + dy
-    }
-
-    const minW = props.win.minWidth
-    const minH = props.win.minHeight
-
-    if (width < minW) {
-      if (dir.includes('w')) x = startRect.x + startRect.width - minW
-      width = minW
-    }
-    if (height < minH) {
-      if (dir.includes('n')) y = startRect.y + startRect.height - minH
-      height = minH
-    }
-
-    wmStore.resizeWindow(props.win.id, { x, y, width, height })
-  }
-
-  function onMouseUp(): void {
-    document.body.style.userSelect = ''
-    document.body.style.cursor = ''
-    document.removeEventListener('mousemove', onMouseMove)
-    document.removeEventListener('mouseup', onMouseUp)
-  }
-
-  document.body.style.userSelect = 'none'
-  document.body.style.cursor = cursorMap[dir] ?? 'default'
-  document.addEventListener('mousemove', onMouseMove)
-  document.addEventListener('mouseup', onMouseUp)
-}
-</script>
 
 <style scoped>
 .mw {

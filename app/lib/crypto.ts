@@ -60,16 +60,25 @@ export async function deriveSharedSecret(myPrivateKeyJwk: string, theirPublicKey
   const myJwk = JSON.parse(myPrivateKeyJwk) as JsonWebKey
   const theirJwk = JSON.parse(theirPublicKeyJwk) as JsonWebKey
   const myPrivateKey = await crypto.subtle.importKey(
-    'jwk', toEcdhJwk(myJwk, ['deriveBits', 'deriveKey']),
-    { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveKey'],
+    'jwk',
+    toEcdhJwk(myJwk, ['deriveBits', 'deriveKey']),
+    { name: 'ECDH', namedCurve: 'P-256' },
+    false,
+    ['deriveKey'],
   )
   const theirPublicKey = await crypto.subtle.importKey(
-    'jwk', toEcdhJwk(theirJwk, []),
-    { name: 'ECDH', namedCurve: 'P-256' }, false, [],
+    'jwk',
+    toEcdhJwk(theirJwk, []),
+    { name: 'ECDH', namedCurve: 'P-256' },
+    false,
+    [],
   )
   return crypto.subtle.deriveKey(
-    { name: 'ECDH', public: theirPublicKey }, myPrivateKey,
-    { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt'],
+    { name: 'ECDH', public: theirPublicKey },
+    myPrivateKey,
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['encrypt', 'decrypt'],
   )
 }
 

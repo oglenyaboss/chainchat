@@ -1,77 +1,8 @@
-<template>
-  <div class="network">
-    <div class="network__toolbar">
-      <span class="network__info">{{ peerStore.peerCount + 1 }} nodes in mesh</span>
-      <NetworkMiningStatus
-        :is-mining="nodeState.isMining"
-        :hashrate="nodeState.hashrate"
-        :nonce="nodeState.currentNonce"
-      />
-    </div>
-
-    <div class="network__graph">
-      <NetworkMeshGraph
-        :peers="peerStore.peerList"
-        :my-peer-id="identityStore.peerId"
-        :width="graphWidth"
-        :height="300"
-      />
-    </div>
-
-    <div class="network__stats">
-      <div class="network__stat-card win95-raised">
-        <span class="network__stat-value">{{ peerStore.peerCount }}</span>
-        <span class="network__stat-label">Connected Peers</span>
-      </div>
-      <div class="network__stat-card win95-raised">
-        <span class="network__stat-value">{{ blockchainStore.blockCount }}</span>
-        <span class="network__stat-label">Blocks Mined</span>
-      </div>
-      <div class="network__stat-card win95-raised">
-        <span class="network__stat-value">{{ blockchainStore.pendingTransactions.length }}</span>
-        <span class="network__stat-label">Pending Tx</span>
-      </div>
-      <div class="network__stat-card win95-raised">
-        <span class="network__stat-value" :style="{ color: stateColor }">{{ nodeState.state }}</span>
-        <span class="network__stat-label">Node State</span>
-      </div>
-    </div>
-
-    <div class="network__peers">
-      <div class="network__peers-header">Peer Details</div>
-      <div class="network__peers-list win95-inset">
-        <div class="network__peer-row network__peer-row--header">
-          <span class="network__peer-status">&nbsp;</span>
-          <span class="network__peer-name">Name</span>
-          <span class="network__peer-key">Public Key</span>
-          <span class="network__peer-hashrate">Hashrate</span>
-        </div>
-        <div class="network__peer-row">
-          <span class="network__peer-status" style="color: var(--win95-success);">&#9679;</span>
-          <span class="network__peer-name">{{ identityStore.nickname }} (you)</span>
-          <span class="network__peer-key">{{ shortKey(identityStore.publicKey) }}</span>
-          <span class="network__peer-hashrate">&mdash;</span>
-        </div>
-        <div
-          v-for="peer in peerStore.peerList"
-          :key="peer.peerId"
-          class="network__peer-row"
-        >
-          <span class="network__peer-status" style="color: var(--win95-selected);">&#9679;</span>
-          <span class="network__peer-name">{{ peer.nickname }}</span>
-          <span class="network__peer-key">{{ shortKey(peer.publicKey) }}</span>
-          <span class="network__peer-hashrate">{{ formatHashrate(peer.hashrate) }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { useIdentityStore } from '~/stores/identity'
-import { usePeerStore } from '~/stores/peers'
 import { useBlockchainStore } from '~/stores/blockchain'
+import { useIdentityStore } from '~/stores/identity'
 import { useNodeStateStore } from '~/stores/node-state'
+import { usePeerStore } from '~/stores/peers'
 
 const identityStore = useIdentityStore()
 const peerStore = usePeerStore()
@@ -120,11 +51,84 @@ function shortKey(key: string): string {
 }
 
 function formatHashrate(h: number): string {
-  if (h === 0) return 'idle'
-  if (h > 1000) return `${(h / 1000).toFixed(1)} kH/s`
+  if (h === 0)
+    return 'idle'
+  if (h > 1000)
+    return `${(h / 1000).toFixed(1)} kH/s`
   return `${h} H/s`
 }
 </script>
+
+<template>
+  <div class="network">
+    <div class="network__toolbar">
+      <span class="network__info">{{ peerStore.peerCount + 1 }} nodes in mesh</span>
+      <NetworkMiningStatus
+        :is-mining="nodeState.isMining"
+        :hashrate="nodeState.hashrate"
+        :nonce="nodeState.currentNonce"
+      />
+    </div>
+
+    <div class="network__graph">
+      <NetworkMeshGraph
+        :peers="peerStore.peerList"
+        :my-peer-id="identityStore.peerId"
+        :width="graphWidth"
+        :height="300"
+      />
+    </div>
+
+    <div class="network__stats">
+      <div class="network__stat-card win95-raised">
+        <span class="network__stat-value">{{ peerStore.peerCount }}</span>
+        <span class="network__stat-label">Connected Peers</span>
+      </div>
+      <div class="network__stat-card win95-raised">
+        <span class="network__stat-value">{{ blockchainStore.blockCount }}</span>
+        <span class="network__stat-label">Blocks Mined</span>
+      </div>
+      <div class="network__stat-card win95-raised">
+        <span class="network__stat-value">{{ blockchainStore.pendingTransactions.length }}</span>
+        <span class="network__stat-label">Pending Tx</span>
+      </div>
+      <div class="network__stat-card win95-raised">
+        <span class="network__stat-value" :style="{ color: stateColor }">{{ nodeState.state }}</span>
+        <span class="network__stat-label">Node State</span>
+      </div>
+    </div>
+
+    <div class="network__peers">
+      <div class="network__peers-header">
+        Peer Details
+      </div>
+      <div class="network__peers-list win95-inset">
+        <div class="network__peer-row network__peer-row--header">
+          <span class="network__peer-status">&nbsp;</span>
+          <span class="network__peer-name">Name</span>
+          <span class="network__peer-key">Public Key</span>
+          <span class="network__peer-hashrate">Hashrate</span>
+        </div>
+        <div class="network__peer-row">
+          <span class="network__peer-status" style="color: var(--win95-success);">&#9679;</span>
+          <span class="network__peer-name">{{ identityStore.nickname }} (you)</span>
+          <span class="network__peer-key">{{ shortKey(identityStore.publicKey) }}</span>
+          <span class="network__peer-hashrate">&mdash;</span>
+        </div>
+        <div
+          v-for="peer in peerStore.peerList"
+          :key="peer.peerId"
+          class="network__peer-row"
+        >
+          <span class="network__peer-status" style="color: var(--win95-selected);">&#9679;</span>
+          <span class="network__peer-name">{{ peer.nickname }}</span>
+          <span class="network__peer-key">{{ shortKey(peer.publicKey) }}</span>
+          <span class="network__peer-hashrate">{{ formatHashrate(peer.hashrate) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .network {

@@ -1,14 +1,3 @@
-<template>
-  <div class="win95-desktop" @click="handleDesktopClick">
-    <div class="win95-desktop__icons">
-      <slot name="icons" />
-    </div>
-    <div class="win95-desktop__windows">
-      <slot />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { useWindowManagerStore } from '~/stores/window-manager'
 
@@ -22,6 +11,17 @@ function handleDesktopClick(): void {
   wmStore.clearFocus()
 }
 </script>
+
+<template>
+  <div class="win95-desktop" @click="handleDesktopClick">
+    <div class="win95-desktop__icons">
+      <slot name="icons" />
+    </div>
+    <div class="win95-desktop__windows">
+      <slot />
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .win95-desktop {

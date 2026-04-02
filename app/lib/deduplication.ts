@@ -7,9 +7,9 @@ const DEFAULT_CAPACITY = 10_000
 
 export interface SeenSet {
   readonly size: number
-  hasSeen(id: string): boolean
-  markSeen(id: string): void
-  clear(): void
+  hasSeen: (id: string) => boolean
+  markSeen: (id: string) => void
+  clear: () => void
 }
 
 export function createSeenSet(capacity: number = DEFAULT_CAPACITY): SeenSet {
@@ -26,7 +26,8 @@ export function createSeenSet(capacity: number = DEFAULT_CAPACITY): SeenSet {
     },
 
     markSeen(id: string): void {
-      if (seen.has(id)) return
+      if (seen.has(id))
+        return
 
       if (seen.size >= capacity) {
         const oldest = order.shift()

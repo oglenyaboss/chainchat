@@ -1,17 +1,3 @@
-<template>
-  <div
-    class="win95-desktop-icon"
-    :class="{ 'win95-desktop-icon--selected': isSelected }"
-    @click.stop="handleClick"
-    @dblclick.stop="handleDblClick"
-  >
-    <div class="win95-desktop-icon__img">
-      <Win95Icon :name="icon" :size="32" />
-    </div>
-    <span class="win95-desktop-icon__label">{{ label }}</span>
-  </div>
-</template>
-
 <script setup lang="ts">
 const props = defineProps<{
   icon: string
@@ -35,6 +21,20 @@ function handleDblClick(): void {
   emit('open', props.windowId)
 }
 </script>
+
+<template>
+  <div
+    class="win95-desktop-icon"
+    :class="{ 'win95-desktop-icon--selected': isSelected }"
+    @click.stop="handleClick"
+    @dblclick.stop="handleDblClick"
+  >
+    <div class="win95-desktop-icon__img">
+      <Win95Icon :name="icon" :size="32" />
+    </div>
+    <span class="win95-desktop-icon__label">{{ label }}</span>
+  </div>
+</template>
 
 <style scoped>
 .win95-desktop-icon {

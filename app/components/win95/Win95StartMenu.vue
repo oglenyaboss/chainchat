@@ -1,35 +1,7 @@
-<template>
-    <div v-if="open" class="win95-startmenu" @click.stop>
-      <div class="win95-startmenu__sidebar">
-        <span class="win95-startmenu__sidebar-text">ChainChat</span>
-      </div>
-      <div class="win95-startmenu__items">
-        <button
-          v-for="item in items"
-          :key="item.id"
-          class="win95-startmenu__item"
-          @click="handleClick(item.id)"
-        >
-          <span class="win95-startmenu__item-icon">
-            <Win95Icon :name="item.icon" :size="16" />
-          </span>
-          <span class="win95-startmenu__item-label">{{ item.label }}</span>
-        </button>
-        <div class="win95-startmenu__divider" />
-        <button class="win95-startmenu__item" @click="handleDesktop">
-          <span class="win95-startmenu__item-icon">
-            <Win95Icon name="monitor" :size="16" />
-          </span>
-          <span class="win95-startmenu__item-label">Desktop</span>
-        </button>
-      </div>
-    </div>
-</template>
-
 <script setup lang="ts">
 defineProps<{
   open: boolean
-  items: { icon: string; label: string; id: string }[]
+  items: { icon: string, label: string, id: string }[]
 }>()
 
 const emit = defineEmits<{
@@ -47,6 +19,34 @@ function handleDesktop(): void {
   emit('close')
 }
 </script>
+
+<template>
+  <div v-if="open" class="win95-startmenu" @click.stop>
+    <div class="win95-startmenu__sidebar">
+      <span class="win95-startmenu__sidebar-text">ChainChat</span>
+    </div>
+    <div class="win95-startmenu__items">
+      <button
+        v-for="item in items"
+        :key="item.id"
+        class="win95-startmenu__item"
+        @click="handleClick(item.id)"
+      >
+        <span class="win95-startmenu__item-icon">
+          <Win95Icon :name="item.icon" :size="16" />
+        </span>
+        <span class="win95-startmenu__item-label">{{ item.label }}</span>
+      </button>
+      <div class="win95-startmenu__divider" />
+      <button class="win95-startmenu__item" @click="handleDesktop">
+        <span class="win95-startmenu__item-icon">
+          <Win95Icon name="monitor" :size="16" />
+        </span>
+        <span class="win95-startmenu__item-label">Desktop</span>
+      </button>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .win95-startmenu {
@@ -120,5 +120,4 @@ function handleDesktop(): void {
   border-bottom: 1px solid var(--win95-highlight);
   margin: 4px 4px;
 }
-
 </style>

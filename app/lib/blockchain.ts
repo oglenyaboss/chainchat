@@ -81,14 +81,18 @@ export async function validateBlock(block: Block, previousBlock: Block | null): 
     previousHash: block.previousHash,
     nonce: block.nonce,
   })
-  if (block.hash !== expectedHash) return false
+  if (block.hash !== expectedHash)
+    return false
   if (previousBlock !== null) {
-    if (block.previousHash !== previousBlock.hash) return false
-    if (block.index !== previousBlock.index + 1) return false
+    if (block.previousHash !== previousBlock.hash)
+      return false
+    if (block.index !== previousBlock.index + 1)
+      return false
   }
   for (const tx of block.transactions) {
     const valid = await verifyTransaction(tx)
-    if (!valid) return false
+    if (!valid)
+      return false
   }
   return true
 }
@@ -97,7 +101,8 @@ export async function validateChain(chain: readonly Block[]): Promise<boolean> {
   for (let i = 0; i < chain.length; i++) {
     const prev = i > 0 ? (chain[i - 1] ?? null) : null
     const valid = await validateBlock(chain[i]!, prev)
-    if (!valid) return false
+    if (!valid)
+      return false
   }
   return true
 }
@@ -119,7 +124,8 @@ export function createGenesisBlock(): Block {
  */
 export function adjustDifficulty(chain: readonly Block[], currentDifficulty: number): number {
   const len = chain.length
-  if (len < DIFFICULTY_ADJUSTMENT_INTERVAL + 1) return currentDifficulty
+  if (len < DIFFICULTY_ADJUSTMENT_INTERVAL + 1)
+    return currentDifficulty
 
   const recentBlock = chain[len - 1]!
   const referenceBlock = chain[len - DIFFICULTY_ADJUSTMENT_INTERVAL]!

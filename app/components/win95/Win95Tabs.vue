@@ -1,3 +1,14 @@
+<script setup lang="ts">
+defineProps<{
+  tabs: { id: string, label: string }[]
+  modelValue: string
+}>()
+
+defineEmits<{
+  'update:modelValue': [id: string]
+}>()
+</script>
+
 <template>
   <div class="win95-tabs">
     <div class="win95-tabs__header">
@@ -16,17 +27,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  tabs: { id: string; label: string }[]
-  modelValue: string
-}>()
-
-defineEmits<{
-  'update:modelValue': [id: string]
-}>()
-</script>
 
 <style scoped>
 .win95-tabs {

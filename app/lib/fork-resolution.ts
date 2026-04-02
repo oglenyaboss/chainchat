@@ -17,8 +17,8 @@ export function shouldReplaceChain(
   }
 
   if (candidateChain.length === currentChain.length && candidateChain.length > 0) {
-    const currentTip = currentChain[currentChain.length - 1]!
-    const candidateTip = candidateChain[candidateChain.length - 1]!
+    const currentTip = currentChain.at(-1)!
+    const candidateTip = candidateChain.at(-1)!
 
     // Lexicographically smaller hash wins — deterministic tiebreak
     if (candidateTip.hash < currentTip.hash) {

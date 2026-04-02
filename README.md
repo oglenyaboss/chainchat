@@ -1,5 +1,8 @@
 # ChainChat
 
+[![CI](https://github.com/oglenyaboss/chainchat/actions/workflows/ci.yml/badge.svg)](https://github.com/oglenyaboss/chainchat/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A peer-to-peer blockchain messenger with a Windows 95 desktop interface.
 
 Every message is a cryptographically signed transaction, mined into blocks via Proof of Work, and delivered over a WebRTC mesh network. No servers store your messages — peers relay them directly.
@@ -12,6 +15,29 @@ Every message is a cryptographically signed transaction, mined into blocks via P
 - **Win95 Desktop** — draggable/resizable windows, taskbar, start menu, desktop icons
 - **Apps** — Chat, Block Explorer, Network monitor, Settings, About
 
+## Architecture
+
+```
+┌─────────────────────────────────────────┐
+│           Win95 UI Components           │
+│  (18 components: windows, taskbar, etc) │
+├─────────┬──────────┬─────────┬──────────┤
+│  Chat   │ Explorer │ Network │ Settings │
+├─────────┴──────────┴─────────┴──────────┤
+│             Composables                 │
+│   useNodeStateMachine (orchestrator)    │
+│   useWebRTC · useSignaling · useMining  │
+├─────────────────────────────────────────┤
+│             Pinia Stores                │
+│   blockchain · chat · identity · peers  │
+├─────────────────────────────────────────┤
+│              Core lib/                  │
+│   blockchain · crypto · sync · protocol │
+│   fork-resolution · orphan-pool         │
+│   deduplication · name-registry         │
+└─────────────────────────────────────────┘
+```
+
 ## Tech Stack
 
 - **Nuxt 4** + **Vue 3** + **TypeScript**
@@ -19,6 +45,7 @@ Every message is a cryptographically signed transaction, mined into blocks via P
 - **Tailwind CSS 4**
 - **Web Workers** for off-thread mining
 - **WebRTC** for P2P mesh
+- **Web Crypto API** for all cryptography (no external crypto deps)
 - **WebSocket** signaling server
 
 ## Getting Started
@@ -42,6 +69,17 @@ Open in two browser tabs to see P2P messaging in action.
 
 - Node.js 22+
 - Modern browser with WebRTC support (Chrome, Firefox, Edge, Safari 15+)
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Nuxt dev server |
+| `npm run dev:signal` | Signaling server only |
+| `npm run dev:all` | Both servers in parallel |
+| `npm run build` | Production build |
+| `npm test` | Run tests |
+| `npm run lint` | Lint code |
 
 ## Project Structure
 
@@ -69,6 +107,10 @@ The signaling server deploys separately from the Nuxt frontend:
 
 Set `NUXT_PUBLIC_SIGNALING_URL` to point the frontend at the deployed signaling server.
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions and guidelines.
+
 ## License
 
-MIT
+[MIT](LICENSE)

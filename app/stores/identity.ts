@@ -12,7 +12,8 @@ export const useIdentityStore = defineStore(
     const isInitialized = computed(() => publicKey.value !== '' && privateKey.value !== '')
 
     async function initialize() {
-      if (isInitialized.value) return
+      if (isInitialized.value)
+        return
 
       const keyPair = await generateKeyPair()
       publicKey.value = keyPair.publicKey

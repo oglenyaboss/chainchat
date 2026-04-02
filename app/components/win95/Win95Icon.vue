@@ -1,16 +1,3 @@
-<template>
-  <img
-    v-if="iconSrc"
-    :src="iconSrc"
-    :width="size"
-    :height="size"
-    :alt="name"
-    class="win95-icon"
-    draggable="false"
-  />
-  <span v-else :style="{ width: `${size}px`, height: `${size}px` }" class="win95-icon win95-icon--missing" />
-</template>
-
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
   name: string
@@ -37,6 +24,19 @@ const ICON_MAP: Readonly<Record<string, string>> = {
 
 const iconSrc = computed(() => ICON_MAP[props.name] ?? '')
 </script>
+
+<template>
+  <img
+    v-if="iconSrc"
+    :src="iconSrc"
+    :width="size"
+    :height="size"
+    :alt="name"
+    class="win95-icon"
+    draggable="false"
+  >
+  <span v-else :style="{ width: `${size}px`, height: `${size}px` }" class="win95-icon win95-icon--missing" />
+</template>
 
 <style scoped>
 .win95-icon {

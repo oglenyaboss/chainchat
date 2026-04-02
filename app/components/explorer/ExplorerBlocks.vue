@@ -1,3 +1,25 @@
+<script setup lang="ts">
+import { useBlockchainStore } from '~/stores/blockchain'
+
+const blockchainStore = useBlockchainStore()
+const search = ref('')
+
+const filteredBlocks = computed(() => {
+  const reversed = [...blockchainStore.chain].reverse()
+  if (!search.value)
+    return reversed
+
+  const q = search.value.toLowerCase()
+  return reversed.filter(block =>
+    block.hash.toLowerCase().includes(q)
+    || block.index.toString() === q
+    || block.transactions.some(tx =>
+      tx.from.toLowerCase().includes(q) || tx.to.toLowerCase().includes(q),
+    ),
+  )
+})
+</script>
+
 <template>
   <div class="blocks-tab">
     <div class="blocks-tab__toolbar">
@@ -21,27 +43,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useBlockchainStore } from '~/stores/blockchain'
-
-const blockchainStore = useBlockchainStore()
-const search = ref('')
-
-const filteredBlocks = computed(() => {
-  const reversed = [...blockchainStore.chain].reverse()
-  if (!search.value) return reversed
-
-  const q = search.value.toLowerCase()
-  return reversed.filter(block =>
-    block.hash.toLowerCase().includes(q)
-    || block.index.toString() === q
-    || block.transactions.some(tx =>
-      tx.from.toLowerCase().includes(q) || tx.to.toLowerCase().includes(q),
-    ),
-  )
-})
-</script>
 
 <style scoped>
 .blocks-tab {

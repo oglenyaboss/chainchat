@@ -1,24 +1,3 @@
-<template>
-  <div class="win95-window" :class="{ 'win95-window--maximized': maximized }">
-    <Win95TitleBar
-      :title="title"
-      :active="active"
-      :closable="closable"
-      :minimizable="minimizable"
-      :maximizable="maximizable"
-      @minimize="$emit('minimize')"
-      @maximize="$emit('maximize')"
-      @close="$emit('close')"
-    />
-    <div class="win95-window__content">
-      <slot />
-    </div>
-    <div v-if="$slots.statusbar" class="win95-window__statusbar">
-      <slot name="statusbar" />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 withDefaults(defineProps<{
   title: string
@@ -41,6 +20,27 @@ defineEmits<{
   close: []
 }>()
 </script>
+
+<template>
+  <div class="win95-window" :class="{ 'win95-window--maximized': maximized }">
+    <Win95TitleBar
+      :title="title"
+      :active="active"
+      :closable="closable"
+      :minimizable="minimizable"
+      :maximizable="maximizable"
+      @minimize="$emit('minimize')"
+      @maximize="$emit('maximize')"
+      @close="$emit('close')"
+    />
+    <div class="win95-window__content">
+      <slot />
+    </div>
+    <div v-if="$slots.statusbar" class="win95-window__statusbar">
+      <slot name="statusbar" />
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .win95-window {

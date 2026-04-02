@@ -1,3 +1,13 @@
+<script setup lang="ts">
+import type { Block } from '~/lib/blockchain'
+
+defineProps<{ block: Block }>()
+
+function formatTime(ts: number): string {
+  return new Date(ts).toLocaleTimeString('ru-RU')
+}
+</script>
+
 <template>
   <div class="block-card win95-raised">
     <div class="block-card__header">
@@ -29,16 +39,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import type { Block } from '~/lib/blockchain'
-
-defineProps<{ block: Block }>()
-
-function formatTime(ts: number): string {
-  return new Date(ts).toLocaleTimeString('ru-RU')
-}
-</script>
 
 <style scoped>
 .block-card {

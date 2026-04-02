@@ -1,22 +1,22 @@
-import { defineStore } from 'pinia'
 import type { Block, Transaction } from '~/lib/blockchain'
+import type { OrphanPool } from '~/lib/orphan-pool'
+import { defineStore } from 'pinia'
 import {
+  adjustDifficulty,
   createGenesisBlock,
+  DIFFICULTY_ADJUSTMENT_INTERVAL,
   validateBlock,
   validateChain,
-  adjustDifficulty,
-  DIFFICULTY_ADJUSTMENT_INTERVAL,
 } from '~/lib/blockchain'
 import { shouldReplaceChain } from '~/lib/fork-resolution'
 import { buildNameRegistry, validateNameRegistration } from '~/lib/name-registry'
-import type { OrphanPool } from '~/lib/orphan-pool'
 
 export const useBlockchainStore = defineStore('blockchain-v2', () => {
   const chain = ref<Block[]>([createGenesisBlock()])
   const pendingTransactions = ref<Transaction[]>([])
   const difficulty = ref(5)
 
-  const latestBlock = computed(() => chain.value[chain.value.length - 1]!)
+  const latestBlock = computed(() => chain.value.at(-1)!)
   const allTransactions = computed(() =>
     chain.value.flatMap(block => block.transactions),
   )
@@ -36,13 +36,15 @@ export const useBlockchainStore = defineStore('blockchain-v2', () => {
 
   async function addBlock(block: Block): Promise<boolean> {
     const valid = await validateBlock(block, latestBlock.value)
-    if (!valid) return false
+    if (!valid)
+      return false
 
     // Validate name registration transactions
     for (const tx of block.transactions) {
       if (tx.type === 'register-name') {
         const error = validateNameRegistration(chain.value, tx.message, tx.from)
-        if (error) return false
+        if (error)
+          return false
       }
     }
 
@@ -64,7 +66,8 @@ export const useBlockchainStore = defineStore('blockchain-v2', () => {
    */
   async function addBlockWithOrphans(block: Block, orphanPool: OrphanPool): Promise<Block[]> {
     const added = await addBlock(block)
-    if (!added) return []
+    if (!added)
+      return []
 
     const addedBlocks: Block[] = [block]
 
@@ -86,9 +89,11 @@ export const useBlockchainStore = defineStore('blockchain-v2', () => {
    * Longer chain wins; equal-length chains use lexicographic hash tiebreak.
    */
   async function replaceChainIfBetter(newChain: Block[]): Promise<boolean> {
-    if (!shouldReplaceChain(chain.value, newChain)) return false
+    if (!shouldReplaceChain(chain.value, newChain))
+      return false
     const valid = await validateChain(newChain)
-    if (!valid) return false
+    if (!valid)
+      return false
 
     chain.value = [...newChain]
     return true
@@ -102,7 +107,8 @@ export const useBlockchainStore = defineStore('blockchain-v2', () => {
 
   function getNameForKey(publicKey: string): string | null {
     for (const entry of nameRegistry.value.values()) {
-      if (entry.publicKey === publicKey) return entry.name
+      if (entry.publicKey === publicKey)
+        return entry.name
     }
     return null
   }
@@ -128,8 +134,7 @@ export const useBlockchainStore = defineStore('blockchain-v2', () => {
     getNameForKey,
     isNameTaken,
   }
-},
-{
+}, {
   persist: {
     storage: piniaPluginPersistedstate.localStorage(),
     pick: ['chain', 'difficulty'],

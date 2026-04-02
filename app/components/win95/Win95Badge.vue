@@ -1,9 +1,3 @@
-<template>
-  <span class="win95-badge" :class="`win95-badge--${color}`">
-    <slot />
-  </span>
-</template>
-
 <script setup lang="ts">
 withDefaults(defineProps<{
   color?: 'default' | 'primary' | 'success' | 'warning' | 'danger'
@@ -11,6 +5,12 @@ withDefaults(defineProps<{
   color: 'default',
 })
 </script>
+
+<template>
+  <span class="win95-badge" :class="`win95-badge--${color}`">
+    <slot />
+  </span>
+</template>
 
 <style scoped>
 .win95-badge {

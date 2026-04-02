@@ -2,7 +2,7 @@ import type { Block } from './blockchain'
 
 const NAME_MIN_LENGTH = 3
 const NAME_MAX_LENGTH = 20
-const NAME_PATTERN = /^[a-zA-Z0-9_]+$/
+const NAME_PATTERN = /^\w+$/
 
 export interface NameEntry {
   readonly name: string

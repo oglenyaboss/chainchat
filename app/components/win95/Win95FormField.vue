@@ -1,15 +1,15 @@
+<script setup lang="ts">
+defineProps<{
+  label?: string
+}>()
+</script>
+
 <template>
   <div class="win95-form-field">
     <label v-if="label" class="win95-form-field__label">{{ label }}</label>
     <slot />
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  label?: string
-}>()
-</script>
 
 <style scoped>
 .win95-form-field {

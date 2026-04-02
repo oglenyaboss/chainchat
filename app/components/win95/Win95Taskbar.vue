@@ -1,3 +1,70 @@
+<script setup lang="ts">
+import { APP_REGISTRY, getAppConfig } from '~/lib/app-registry'
+import { useNodeStateStore } from '~/stores/node-state'
+import { usePeerStore } from '~/stores/peers'
+import { useWindowManagerStore } from '~/stores/window-manager'
+
+const nodeState = useNodeStateStore()
+const peerStore = usePeerStore()
+const wmStore = useWindowManagerStore()
+
+const startMenuOpen = ref(false)
+
+const menuItems = APP_REGISTRY
+  .filter(app => app.id !== 'about')
+  .map(app => ({ icon: app.icon, label: app.title.split(' - ')[0] ?? app.title, id: app.id }))
+
+function handleMenuSelect(id: string): void {
+  if (id === 'desktop') {
+    for (const win of wmStore.windows) {
+      if (!win.minimized)
+        wmStore.minimizeWindow(win.id)
+    }
+    return
+  }
+
+  const config = getAppConfig(id)
+  if (config) {
+    wmStore.openWindow(config)
+  }
+}
+
+const stateIcon = computed(() => {
+  const icons: Record<string, string> = {
+    INIT: 'computer',
+    CONNECTING: 'wifi',
+    SYNCING: 'reload',
+    READY: 'check',
+    MINING: 'zap',
+  }
+  return icons[nodeState.state] ?? 'computer'
+})
+
+const clock = ref('')
+
+function updateClock(): void {
+  clock.value = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+}
+
+let clockInterval: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  updateClock()
+  clockInterval = setInterval(updateClock, 10_000)
+  document.addEventListener('click', closeStartMenu)
+})
+
+onUnmounted(() => {
+  if (clockInterval)
+    clearInterval(clockInterval)
+  document.removeEventListener('click', closeStartMenu)
+})
+
+function closeStartMenu(): void {
+  startMenuOpen.value = false
+}
+</script>
+
 <template>
   <div class="win95-taskbar">
     <div class="win95-taskbar__inner">
@@ -49,71 +116,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useNodeStateStore } from '~/stores/node-state'
-import { usePeerStore } from '~/stores/peers'
-import { useWindowManagerStore } from '~/stores/window-manager'
-import { APP_REGISTRY, getAppConfig } from '~/lib/app-registry'
-
-const nodeState = useNodeStateStore()
-const peerStore = usePeerStore()
-const wmStore = useWindowManagerStore()
-
-const startMenuOpen = ref(false)
-
-const menuItems = APP_REGISTRY
-  .filter(app => app.id !== 'about')
-  .map(app => ({ icon: app.icon, label: app.title.split(' - ')[0] ?? app.title, id: app.id }))
-
-function handleMenuSelect(id: string): void {
-  if (id === 'desktop') {
-    for (const win of wmStore.windows) {
-      if (!win.minimized) wmStore.minimizeWindow(win.id)
-    }
-    return
-  }
-
-  const config = getAppConfig(id)
-  if (config) {
-    wmStore.openWindow(config)
-  }
-}
-
-const stateIcon = computed(() => {
-  const icons: Record<string, string> = {
-    INIT: 'computer',
-    CONNECTING: 'wifi',
-    SYNCING: 'reload',
-    READY: 'check',
-    MINING: 'zap',
-  }
-  return icons[nodeState.state] ?? 'computer'
-})
-
-const clock = ref('')
-
-function updateClock(): void {
-  clock.value = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-}
-
-let clockInterval: ReturnType<typeof setInterval> | null = null
-
-onMounted(() => {
-  updateClock()
-  clockInterval = setInterval(updateClock, 10_000)
-  document.addEventListener('click', closeStartMenu)
-})
-
-onUnmounted(() => {
-  if (clockInterval) clearInterval(clockInterval)
-  document.removeEventListener('click', closeStartMenu)
-})
-
-function closeStartMenu(): void {
-  startMenuOpen.value = false
-}
-</script>
 
 <style scoped>
 .win95-taskbar {

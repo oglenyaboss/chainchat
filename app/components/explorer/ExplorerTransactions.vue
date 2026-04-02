@@ -1,58 +1,3 @@
-<template>
-  <div class="txns-tab">
-    <div class="txns-tab__toolbar">
-      <div class="txns-tab__filters">
-        <Win95Button
-          :class="{ 'txns-tab__filter--active': filter === 'all' }"
-          @click="filter = 'all'"
-        >
-          All ({{ allTransactions.length }})
-        </Win95Button>
-        <Win95Button
-          :class="{ 'txns-tab__filter--active': filter === 'message' }"
-          @click="filter = 'message'"
-        >
-          Messages ({{ messageCount }})
-        </Win95Button>
-        <Win95Button
-          :class="{ 'txns-tab__filter--active': filter === 'register-name' }"
-          @click="filter = 'register-name'"
-        >
-          Registrations ({{ registerCount }})
-        </Win95Button>
-      </div>
-      <Win95Input
-        v-model="search"
-        placeholder="Search by address or message..."
-        class="txns-tab__search"
-      />
-    </div>
-
-    <div class="txns-tab__header">
-      <span class="txns-tab__col txns-tab__col--type">Type</span>
-      <span class="txns-tab__col txns-tab__col--from">From</span>
-      <span class="txns-tab__col txns-tab__col--arrow"></span>
-      <span class="txns-tab__col txns-tab__col--to">To</span>
-      <span class="txns-tab__col txns-tab__col--msg">Content</span>
-      <span class="txns-tab__col txns-tab__col--block">Block</span>
-      <span class="txns-tab__col txns-tab__col--time">Time</span>
-      <span class="txns-tab__col txns-tab__col--sig">Sig</span>
-    </div>
-
-    <div class="txns-tab__list win95-inset">
-      <ExplorerTransactionDetail
-        v-for="item in filteredTransactions"
-        :key="item.tx.id"
-        :tx="item.tx"
-        :block-index="item.blockIndex"
-      />
-      <div v-if="filteredTransactions.length === 0" class="txns-tab__empty">
-        No transactions match your filter
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { Transaction, TransactionType } from '~/lib/blockchain'
 import { useBlockchainStore } from '~/stores/blockchain'
@@ -100,6 +45,61 @@ const filteredTransactions = computed(() => {
   return items
 })
 </script>
+
+<template>
+  <div class="txns-tab">
+    <div class="txns-tab__toolbar">
+      <div class="txns-tab__filters">
+        <Win95Button
+          :class="{ 'txns-tab__filter--active': filter === 'all' }"
+          @click="filter = 'all'"
+        >
+          All ({{ allTransactions.length }})
+        </Win95Button>
+        <Win95Button
+          :class="{ 'txns-tab__filter--active': filter === 'message' }"
+          @click="filter = 'message'"
+        >
+          Messages ({{ messageCount }})
+        </Win95Button>
+        <Win95Button
+          :class="{ 'txns-tab__filter--active': filter === 'register-name' }"
+          @click="filter = 'register-name'"
+        >
+          Registrations ({{ registerCount }})
+        </Win95Button>
+      </div>
+      <Win95Input
+        v-model="search"
+        placeholder="Search by address or message..."
+        class="txns-tab__search"
+      />
+    </div>
+
+    <div class="txns-tab__header">
+      <span class="txns-tab__col txns-tab__col--type">Type</span>
+      <span class="txns-tab__col txns-tab__col--from">From</span>
+      <span class="txns-tab__col txns-tab__col--arrow" />
+      <span class="txns-tab__col txns-tab__col--to">To</span>
+      <span class="txns-tab__col txns-tab__col--msg">Content</span>
+      <span class="txns-tab__col txns-tab__col--block">Block</span>
+      <span class="txns-tab__col txns-tab__col--time">Time</span>
+      <span class="txns-tab__col txns-tab__col--sig">Sig</span>
+    </div>
+
+    <div class="txns-tab__list win95-inset">
+      <ExplorerTransactionDetail
+        v-for="item in filteredTransactions"
+        :key="item.tx.id"
+        :tx="item.tx"
+        :block-index="item.blockIndex"
+      />
+      <div v-if="filteredTransactions.length === 0" class="txns-tab__empty">
+        No transactions match your filter
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .txns-tab {

@@ -1,3 +1,14 @@
+<script setup lang="ts">
+defineProps<{
+  channels: { id: string, label: string }[]
+  activeChannel: string
+}>()
+
+defineEmits<{
+  select: [channelId: string]
+}>()
+</script>
+
 <template>
   <div class="channel-list">
     <div
@@ -12,17 +23,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-defineProps<{
-  channels: { id: string; label: string }[]
-  activeChannel: string
-}>()
-
-defineEmits<{
-  select: [channelId: string]
-}>()
-</script>
 
 <style scoped>
 .channel-list__item {

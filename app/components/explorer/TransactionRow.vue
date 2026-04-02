@@ -1,15 +1,3 @@
-<template>
-  <div class="tx-row">
-    <span class="tx-row__arrow">&#8594;</span>
-    <span class="tx-row__addr" :title="tx.from">{{ shortKey(tx.from) }}</span>
-    <span class="tx-row__arrow">&#8594;</span>
-    <span class="tx-row__addr" :title="tx.to">
-      {{ tx.to === 'broadcast' ? 'BROADCAST' : shortKey(tx.to) }}
-    </span>
-    <span class="tx-row__time">{{ formatTime(tx.timestamp) }}</span>
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { Transaction } from '~/lib/blockchain'
 
@@ -30,6 +18,18 @@ function formatTime(ts: number): string {
   return new Date(ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
 </script>
+
+<template>
+  <div class="tx-row">
+    <span class="tx-row__arrow">&#8594;</span>
+    <span class="tx-row__addr" :title="tx.from">{{ shortKey(tx.from) }}</span>
+    <span class="tx-row__arrow">&#8594;</span>
+    <span class="tx-row__addr" :title="tx.to">
+      {{ tx.to === 'broadcast' ? 'BROADCAST' : shortKey(tx.to) }}
+    </span>
+    <span class="tx-row__time">{{ formatTime(tx.timestamp) }}</span>
+  </div>
+</template>
 
 <style scoped>
 .tx-row {

@@ -1,15 +1,3 @@
-<template>
-  <div class="win95-progress">
-    <div class="win95-progress__track">
-      <div
-        v-for="i in filledSegments"
-        :key="i"
-        class="win95-progress__segment"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 const props = withDefaults(defineProps<{
   value: number
@@ -25,6 +13,18 @@ const filledSegments = computed(() => {
   return Math.round(ratio * totalSegments)
 })
 </script>
+
+<template>
+  <div class="win95-progress">
+    <div class="win95-progress__track">
+      <div
+        v-for="i in filledSegments"
+        :key="i"
+        class="win95-progress__segment"
+      />
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .win95-progress {

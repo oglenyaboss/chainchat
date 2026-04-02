@@ -1,14 +1,3 @@
-<template>
-  <div class="mesh-graph win95-inset">
-    <canvas
-      ref="canvasRef"
-      :width="width"
-      :height="height"
-      class="mesh-graph__canvas"
-    />
-  </div>
-</template>
-
 <script setup lang="ts">
 import type { ConnectedPeer } from '~/stores/peers'
 
@@ -50,7 +39,8 @@ watch(
 
     nodes.value = allPeers.map((peer, i) => {
       const ex = existing.get(peer.nickname)
-      if (ex) return { ...ex, isMe: peer.isMe }
+      if (ex)
+        return { ...ex, isMe: peer.isMe }
 
       const angle = (2 * Math.PI * i) / allPeers.length
       const r = Math.min(width.value, height.value) * 0.3
@@ -69,9 +59,11 @@ watch(
 
 function draw() {
   const canvas = canvasRef.value
-  if (!canvas) return
+  if (!canvas)
+    return
   const ctx = canvas.getContext('2d')
-  if (!ctx) return
+  if (!ctx)
+    return
 
   // Win95-style white background
   ctx.fillStyle = '#FFFFFF'
@@ -115,8 +107,10 @@ function draw() {
     // Animate
     node.x += node.vx
     node.y += node.vy
-    if (node.x < 30 || node.x > width.value - 30) node.vx *= -1
-    if (node.y < 30 || node.y > height.value - 30) node.vy *= -1
+    if (node.x < 30 || node.x > width.value - 30)
+      node.vx *= -1
+    if (node.y < 30 || node.y > height.value - 30)
+      node.vy *= -1
   }
 
   animationId = requestAnimationFrame(draw)
@@ -127,9 +121,21 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  if (animationId) cancelAnimationFrame(animationId)
+  if (animationId)
+    cancelAnimationFrame(animationId)
 })
 </script>
+
+<template>
+  <div class="mesh-graph win95-inset">
+    <canvas
+      ref="canvasRef"
+      :width="width"
+      :height="height"
+      class="mesh-graph__canvas"
+    />
+  </div>
+</template>
 
 <style scoped>
 .mesh-graph {

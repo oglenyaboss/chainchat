@@ -1,16 +1,3 @@
-<template>
-  <textarea
-    :value="modelValue"
-    :placeholder="placeholder"
-    :readonly="readonly"
-    :rows="rows"
-    class="win95-textarea"
-    :class="{ 'win95-textarea--readonly': readonly }"
-    @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
-    v-bind="$attrs"
-  />
-</template>
-
 <script setup lang="ts">
 defineProps<{
   modelValue?: string
@@ -23,6 +10,19 @@ defineEmits<{
   'update:modelValue': [value: string]
 }>()
 </script>
+
+<template>
+  <textarea
+    :value="modelValue"
+    :placeholder="placeholder"
+    :readonly="readonly"
+    :rows="rows"
+    class="win95-textarea"
+    :class="{ 'win95-textarea--readonly': readonly }"
+    v-bind="$attrs"
+    @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
+  />
+</template>
 
 <style scoped>
 .win95-textarea {

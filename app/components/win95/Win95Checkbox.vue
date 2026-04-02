@@ -1,18 +1,3 @@
-<template>
-  <label class="win95-checkbox">
-    <input
-      type="checkbox"
-      :checked="modelValue"
-      class="win95-checkbox__input"
-      @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
-    />
-    <span class="win95-checkbox__box">
-      <span v-if="modelValue" class="win95-checkbox__check">&#10003;</span>
-    </span>
-    <span v-if="label" class="win95-checkbox__label">{{ label }}</span>
-  </label>
-</template>
-
 <script setup lang="ts">
 defineProps<{
   modelValue: boolean
@@ -23,6 +8,21 @@ defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 </script>
+
+<template>
+  <label class="win95-checkbox">
+    <input
+      type="checkbox"
+      :checked="modelValue"
+      class="win95-checkbox__input"
+      @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
+    >
+    <span class="win95-checkbox__box">
+      <span v-if="modelValue" class="win95-checkbox__check">&#10003;</span>
+    </span>
+    <span v-if="label" class="win95-checkbox__label">{{ label }}</span>
+  </label>
+</template>
 
 <style scoped>
 .win95-checkbox {

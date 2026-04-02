@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import { useBlockchainStore } from '~/stores/blockchain'
+
+const blockchainStore = useBlockchainStore()
+
+const pending = computed(() => blockchainStore.pendingTransactions)
+</script>
+
 <template>
   <div class="mempool-tab">
     <div class="mempool-tab__info">
@@ -19,22 +27,18 @@
     </div>
 
     <div v-else class="mempool-tab__empty win95-inset">
-      <div class="mempool-tab__empty-icon">&#128230;</div>
-      <div class="mempool-tab__empty-text">No pending transactions</div>
+      <div class="mempool-tab__empty-icon">
+        &#128230;
+      </div>
+      <div class="mempool-tab__empty-text">
+        No pending transactions
+      </div>
       <div class="mempool-tab__empty-hint">
         Send a message in ChainChat to create a transaction
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useBlockchainStore } from '~/stores/blockchain'
-
-const blockchainStore = useBlockchainStore()
-
-const pending = computed(() => blockchainStore.pendingTransactions)
-</script>
 
 <style scoped>
 .mempool-tab {

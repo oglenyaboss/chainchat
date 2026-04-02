@@ -1,21 +1,3 @@
-<template>
-  <div class="explorer">
-    <div class="explorer__badges">
-      <Win95Badge v-if="showReorgBadge" color="warning">Chain reorganized</Win95Badge>
-      <Win95Badge v-if="nodeState.orphanPoolSize > 0">{{ nodeState.orphanPoolSize }} orphans</Win95Badge>
-    </div>
-
-    <Win95Tabs v-model="activeTab" :tabs="tabs" class="explorer__tabs">
-      <div class="explorer__tab-content">
-        <ExplorerOverview v-if="activeTab === 'overview'" />
-        <ExplorerBlocks v-else-if="activeTab === 'blocks'" />
-        <ExplorerTransactions v-else-if="activeTab === 'transactions'" />
-        <ExplorerMempool v-else-if="activeTab === 'mempool'" />
-      </div>
-    </Win95Tabs>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { useBlockchainStore } from '~/stores/blockchain'
 import { useNodeStateStore } from '~/stores/node-state'
@@ -33,10 +15,33 @@ const tabs = computed(() => [
 ])
 
 const showReorgBadge = computed(() => {
-  if (!nodeState.chainReplacedAt) return false
+  if (!nodeState.chainReplacedAt)
+    return false
   return Date.now() - nodeState.chainReplacedAt < 5000
 })
 </script>
+
+<template>
+  <div class="explorer">
+    <div class="explorer__badges">
+      <Win95Badge v-if="showReorgBadge" color="warning">
+        Chain reorganized
+      </Win95Badge>
+      <Win95Badge v-if="nodeState.orphanPoolSize > 0">
+        {{ nodeState.orphanPoolSize }} orphans
+      </Win95Badge>
+    </div>
+
+    <Win95Tabs v-model="activeTab" :tabs="tabs" class="explorer__tabs">
+      <div class="explorer__tab-content">
+        <ExplorerOverview v-if="activeTab === 'overview'" />
+        <ExplorerBlocks v-else-if="activeTab === 'blocks'" />
+        <ExplorerTransactions v-else-if="activeTab === 'transactions'" />
+        <ExplorerMempool v-else-if="activeTab === 'mempool'" />
+      </div>
+    </Win95Tabs>
+  </div>
+</template>
 
 <style scoped>
 .explorer {

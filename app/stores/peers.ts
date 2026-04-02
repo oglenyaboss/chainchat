@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia'
 import type { PeerInfo } from '~/lib/protocol'
+import { defineStore } from 'pinia'
 
 export interface ConnectedPeer extends PeerInfo {
   readonly connectedAt: number

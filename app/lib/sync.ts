@@ -22,16 +22,16 @@ const HEAD_COLLECTION_TIMEOUT_MS = 5_000
 
 export interface SyncCoordinator {
   readonly state: SyncState
-  startSync(peerIds: readonly string[], localChainLength: number): void
-  handleChainHeadResponse(peerId: string, index: number, hash: string): void
-  handleBlocksResponse(blocks: readonly Block[], totalLength: number): {
+  startSync: (peerIds: readonly string[], localChainLength: number) => void
+  handleChainHeadResponse: (peerId: string, index: number, hash: string) => void
+  handleBlocksResponse: (blocks: readonly Block[], totalLength: number) => {
     progress: number
     complete: boolean
     chain: readonly Block[] | null
   }
-  getBestPeer(): string | null
-  reset(): void
-  isTimedOut(): boolean
+  getBestPeer: () => string | null
+  reset: () => void
+  isTimedOut: () => boolean
 }
 
 export function createSyncCoordinator(): SyncCoordinator {
@@ -71,7 +71,8 @@ export function createSyncCoordinator(): SyncCoordinator {
     },
 
     handleChainHeadResponse(peerId: string, index: number, hash: string): void {
-      if (state.phase !== 'collecting-heads') return
+      if (state.phase !== 'collecting-heads')
+        return
 
       collectedHeads = [...collectedHeads, { peerId, index, hash }]
 
@@ -105,7 +106,7 @@ export function createSyncCoordinator(): SyncCoordinator {
     handleBlocksResponse(
       blocks: readonly Block[],
       totalLength: number,
-    ): { progress: number; complete: boolean; chain: readonly Block[] | null } {
+    ): { progress: number, complete: boolean, chain: readonly Block[] | null } {
       if (state.phase !== 'downloading-blocks') {
         return { progress: 1, complete: true, chain: null }
       }
@@ -147,7 +148,8 @@ export function createSyncCoordinator(): SyncCoordinator {
     },
 
     isTimedOut(): boolean {
-      if (state.phase !== 'collecting-heads') return false
+      if (state.phase !== 'collecting-heads')
+        return false
       return Date.now() - syncStartTime > HEAD_COLLECTION_TIMEOUT_MS
     },
   }

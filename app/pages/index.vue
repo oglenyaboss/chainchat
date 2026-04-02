@@ -1,3 +1,40 @@
+<script setup lang="ts">
+import { getAppConfig } from '~/lib/app-registry'
+import { useIdentityStore } from '~/stores/identity'
+import { useWindowManagerStore } from '~/stores/window-manager'
+
+definePageMeta({
+  layout: 'desktop',
+})
+
+const identityStore = useIdentityStore()
+const wmStore = useWindowManagerStore()
+const router = useRouter()
+
+// Node state machine — runs at desktop level, shared via provide/inject
+const stateMachine = useNodeStateMachine()
+provide('stateMachine', stateMachine)
+
+onMounted(() => {
+  if (!identityStore.isInitialized) {
+    router.push('/welcome')
+    return
+  }
+  stateMachine.start()
+})
+
+onUnmounted(() => {
+  stateMachine.stop()
+})
+
+function openApp(id: string): void {
+  const config = getAppConfig(id)
+  if (!config)
+    return
+  wmStore.openWindow(config)
+}
+</script>
+
 <template>
   <Win95Desktop>
     <template #icons>
@@ -47,39 +84,3 @@
     </Win95ManagedWindow>
   </Win95Desktop>
 </template>
-
-<script setup lang="ts">
-import { useIdentityStore } from '~/stores/identity'
-import { useWindowManagerStore } from '~/stores/window-manager'
-import { getAppConfig } from '~/lib/app-registry'
-
-definePageMeta({
-  layout: 'desktop',
-})
-
-const identityStore = useIdentityStore()
-const wmStore = useWindowManagerStore()
-const router = useRouter()
-
-// Node state machine — runs at desktop level, shared via provide/inject
-const stateMachine = useNodeStateMachine()
-provide('stateMachine', stateMachine)
-
-onMounted(() => {
-  if (!identityStore.isInitialized) {
-    router.push('/welcome')
-    return
-  }
-  stateMachine.start()
-})
-
-onUnmounted(() => {
-  stateMachine.stop()
-})
-
-function openApp(id: string): void {
-  const config = getAppConfig(id)
-  if (!config) return
-  wmStore.openWindow(config)
-}
-</script>

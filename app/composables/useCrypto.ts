@@ -1,11 +1,12 @@
-import { deriveSharedSecret, encryptMessage, decryptMessage } from '~/lib/crypto'
+import { decryptMessage, deriveSharedSecret, encryptMessage } from '~/lib/crypto'
 
 export function useCrypto() {
   const sharedKeys = ref<Map<string, CryptoKey>>(new Map())
 
   async function getSharedKey(myPrivateKey: string, theirPublicKey: string): Promise<CryptoKey> {
     const cached = sharedKeys.value.get(theirPublicKey)
-    if (cached) return cached
+    if (cached)
+      return cached
 
     const key = await deriveSharedSecret(myPrivateKey, theirPublicKey)
     const newMap = new Map(sharedKeys.value)

@@ -1,18 +1,3 @@
-<template>
-  <div class="win95-layout">
-    <div class="win95-layout__content">
-      <Win95Window
-        :title="pageTitle"
-        maximized
-        :active="true"
-      >
-        <slot />
-      </Win95Window>
-    </div>
-    <Win95Taskbar />
-  </div>
-</template>
-
 <script setup lang="ts">
 const route = useRoute()
 
@@ -27,6 +12,21 @@ const pageTitle = computed(() => {
   return titles[route.path] ?? 'ChainChat'
 })
 </script>
+
+<template>
+  <div class="win95-layout">
+    <div class="win95-layout__content">
+      <Win95Window
+        :title="pageTitle"
+        maximized
+        :active="true"
+      >
+        <slot />
+      </Win95Window>
+    </div>
+    <Win95Taskbar />
+  </div>
+</template>
 
 <style scoped>
 .win95-layout {

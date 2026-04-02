@@ -1,15 +1,17 @@
-<template>
-  <fieldset class="win95-groupbox">
-    <legend v-if="label" class="win95-groupbox__legend">{{ label }}</legend>
-    <slot />
-  </fieldset>
-</template>
-
 <script setup lang="ts">
 defineProps<{
   label?: string
 }>()
 </script>
+
+<template>
+  <fieldset class="win95-groupbox">
+    <legend v-if="label" class="win95-groupbox__legend">
+      {{ label }}
+    </legend>
+    <slot />
+  </fieldset>
+</template>
 
 <style scoped>
 .win95-groupbox {

@@ -10,11 +10,11 @@ const DEFAULT_MAX_SIZE = 100
 
 export interface OrphanPool {
   readonly size: number
-  add(block: Block): void
-  getByParentHash(parentHash: string): readonly Block[]
-  removeByParentHash(parentHash: string): void
-  cleanup(ttlMs?: number): number
-  clear(): void
+  add: (block: Block) => void
+  getByParentHash: (parentHash: string) => readonly Block[]
+  removeByParentHash: (parentHash: string) => void
+  cleanup: (ttlMs?: number) => number
+  clear: () => void
 }
 
 export function createOrphanPool(maxSize: number = DEFAULT_MAX_SIZE): OrphanPool {
@@ -59,7 +59,8 @@ export function createOrphanPool(maxSize: number = DEFAULT_MAX_SIZE): OrphanPool
       const key = block.previousHash
       const existing = entries.get(key) ?? []
       const alreadyExists = existing.some(e => e.block.hash === block.hash)
-      if (alreadyExists) return
+      if (alreadyExists)
+        return
 
       entries.set(key, [...existing, { block, addedAt: Date.now() }])
       totalSize++
